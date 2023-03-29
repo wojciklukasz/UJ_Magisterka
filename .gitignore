@@ -256,3 +256,4 @@ cython_debug/
 /dataset/BIRAFFE2/
 *.csv
 /envs/
+/dataset/test.ipynb
