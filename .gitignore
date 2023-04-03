@@ -251,6 +251,13 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.lof
+*.toc
+thesis/pdf_out/*.out
 
 # Project specific
 /dataset/BIRAFFE2/

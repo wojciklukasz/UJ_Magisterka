@@ -1,0 +1,79 @@
+\documentclass[12pt]{ociamthesis}
+
+%load any additional packages
+\usepackage{amsmath, amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage[polish]{babel}
+\usepackage[square,numbers]{natbib}
+\usepackage{doi}
+\usepackage{indentfirst}
+
+%setup interactive table of contents and references
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+%end the preamble and start the document
+\begin{document}
+        \baselineskip=18pt plus1pt
+
+        %set the number of sectioning levels that get number and appear in the contents
+        \setcounter{secnumdepth}{3}
+        \setcounter{tocdepth}{3}
+
+        %title
+        \begin{titlepage}
+                \centering
+                {\LARGE\bfseries Uniwersytet Jagielloński w Krakowie\par}
+                \vspace{3mm}
+                {\LARGE Wydział Fizyki, Astronomii i Informatyki Stosowanej\par}
+                \vspace{3cm}
+                {\LARGE\bfseries Łukasz Wójcik\par}
+                \vspace{3mm}
+                {Nr albumu: 1188524 \par}
+                \vspace{2cm}
+                {\huge\textbf{Opracowanie jedno- i~wielomodalnych modeli predykcji~emocji}\par}
+                \vspace{5mm}
+                {\large Praca magisterska\par}
+                {\large na kierunku Informatyka Stosowana\par}
+                \vfill
+                \begin{flushright}
+                {\large Praca wykonana pod kierunkiem:\par}
+                {\large dr inż. Krzysztofa Kutta\par}
+                {\large Zakład Technologii Gier\par}
+                \end{flushright}
+                \vspace{1cm}
+                {\large Kraków 2023\par}
+        \end{titlepage}
+
+
+        %\include{dedication}        % include a dedication.tex file
+        %\include{acknowledgements}  % include an acknowledgements.tex file
+        \include{abstract}           % include the abstract
+        \include{introduction}       % include the introduction
+        \tableofcontents             % generate and include a table of contents
+
+        %now include the files of latex for each of the chapters
+        \include{chapter1}
+
+        %now enable appendix numbering format and include any appendices
+        %\appendix
+        %\include{appendix1}
+        %\include{appendix2}
+
+
+        \listoffigures              % generate and include a list of figures
+        \addcontentsline{toc}{chapter}{Spis rysunków} % add a list of figures to the contents page
+
+        \bibliography{refs}        % use a bibtex bibliography file refs.bib
+        \bibliographystyle{unsrtnat}  % use the plain bibliography style
+        \addcontentsline{toc}{chapter}{Bibliografia} % add the Bibliography to the contents page
+
+\end{document}
+
