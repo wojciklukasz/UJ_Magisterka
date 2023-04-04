@@ -1,6 +1,8 @@
-\chapter{Automatyczne rozpoznawanie emocji}\label{ch:automatyczne-rozpoznawanie-emocji}
+\chapter{Automatyczne rozpoznawanie emocji}
+\label{ch:automatyczne-rozpoznawanie-emocji}
 
-\section{Metody rozpoznawania emocji}\label{sec:metody-rozpoznawania-emocji}
+\section{Metody rozpoznawania emocji}
+\label{sec:metody-rozpoznawania-emocji}
 
 Istnieje wiele sposobów, na podstawie których można wnioskować stan emocjonalny człowieka.
 Pozwala to na wykorzystanie bardzo zróżnicowanych podejść, od oceny wyglądu, przez analizę zachowań, aż po pomiary aktywności elektrycznej w organizmie.
@@ -10,3 +12,15 @@ Poniżej znajduje się opis najczęściej stosowanych metod\cite{Varghese2015, D
 
 \subsection{Wyraz twarzy}\label{subsec:wyraz-twarzy}
 Twarz
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.10]{face_pipeline}
+    \caption{Schemat systemu rozpoznającego emocje na podstawie twarzy\cite{Ko2018}.}
+    \label{fig:face-pipeline}
+\end{figure}
+
+Rysunek~\ref{fig:face-pipeline} przedstawia ogólny schemat systemu rozpoznającego emocje na podstawie wyrazu twarzy.
+Na wejściu program otrzymuje pojedyncze zdjęcie lub nagranie zawierające twarz.
+Pierwszym krokiem jest wykrycie twarzy w dostarczonym źródle, może być ich wiele.
+Następnie przeprowadza się proces ekstrakcji charakterystycznych miejsc.

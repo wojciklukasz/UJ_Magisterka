@@ -258,9 +258,11 @@ cython_debug/
 *.lof
 *.toc
 thesis/pdf_out/*.out
+/thesis/images/
 
 # Project specific
 /dataset/BIRAFFE2/
 *.csv
 /envs/
 /dataset/test.ipynb
+
