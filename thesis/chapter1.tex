@@ -1,26 +1,297 @@
-\chapter{Automatyczne rozpoznawanie emocji}
-\label{ch:automatyczne-rozpoznawanie-emocji}
+\chapter{Automatyczna predykcja emocji}
+\label{ch:automatyczna-predykcja-emocji}
+
+\section{Uogólniony system rozpoznawania emocji}
+\label{sec:uogolniony-system-rozpoznawania-emocji}
+
+W badaniach nad automatycznym rozpoznawaniem emocji dominują systemy oparte na uczeniu maszynowym lub modelach statystycznych~\cite{Varghese2015, Dzedzickis2020}.
+Powoduje to, że wykonuje się w~nich podobne kroki.
+Dane w~takich systemach przechodzą zazwyczaj sekwencyjnie przez tak zwany potok (ang.~\textit{pipeline}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{generalised-system}
+    \caption{Ogólny schemat systemu predykcji emocji}
+    \label{fig:generalised-system}
+\end{figure}
+
+Rysunek~\ref{fig:generalised-system} przedstawia uproszczony schemat systemu predykcji emocji.
+
+Na początku system otrzymuje nieprzetworzone dane, często nazywane surowymi (ang.~\textit{raw data}).
+W zależności od źródła mogą to być zdjęcia, filmy, zapisy sygnałów biofizycznych (elektrokardiografia, elektroencefalografia itp.) oraz wiele innych.
+Mogą być to wartości pochodzące bezpośrednio z~sensorów, bazy danych lub z~publicznie dostępnych zbiorów.
+
+Dane wejściowe zazwyczaj nie są wystarczającej jakości dlatego kolejny krok to ich oczyszczenie.
+Może to być na przykład redukcja szumów w~sygnale, odrzucanie skrajnych wartości lub uzupełnianie brakujących.
+Dodatkowo niektóre modele dają lepsze wyniki po normalizacji danych.
+
+Większość modeli nie przyjmuje na wejściu surowych danych, dlatego następnie wykonuje się proces ekstrakcji cech (ang.~\textit{feature extraction}).
+Pozwala on na zmianę danych wejściowych na wartości istotne dla rozpoznawania emocji.
+Często są to wartości z~funkcji i~miar statystycznych, takie jak mediana, średnie, odchylenia itp.
+Przykładowe cechy to geometria twarzy, szybkość mówienia, czas pomiędzy uderzeniami serca.
+
+W zależności od metody ilość cech może wynosić ponad 700~\cite{Wood2022}, dlatego w~niektórych systemach kolejnym krokiem jest redukcja wymiarowości.
+Ma ona na celu zmniejszenie liczby cech wejściowych poprzez łączenie tych silnie skorelowanych, rzutowanie w~mniej wymiarowe przestrzenie lub odrzucanie wartości, które nie poprawiają wyników.
+Powszechnie stosowane podejścia to: analiza głównych składowych (ang.~\textit{principal components analysis (PCA)}), grupowanie hierarchiczne (ang.~\textit{hierarchical cluster analysis (HCA)}), Gaussian random projection.
+
+Po uzyskaniu ostatecznych danych następuje trening modelu, zazwyczaj jest to uczenie nadzorowane.
+Oznaczanie danych dobywa się na dwa sposoby.
+W pierwszym każdy wektor danych ma przypisaną kategoryczną emocję, na przykład strach lub złość.
+W drugim emocje opisane są w~przestrzeni wielowymiarowej, zatem zamiast jednej kategorii posiadają zazwyczaj dwie lub trzy wartości.
+Do klasyfikacji stosuje się różnorakie podejścia, między innymi: support vector machine (SVM), random forest classifier (RFC), stochastic gradient descent (SGD), AdaBoost, hidden Markov models (HMM), linear discriminate analysis (LDA), k-nearest neighbor (k-NN), sztuczne sieci neuronowe~\cite{Varghese2015, Dzedzickis2020, Ko2018}.
 
 \section{Metody rozpoznawania emocji}
 \label{sec:metody-rozpoznawania-emocji}
 
 Istnieje wiele sposobów, na podstawie których można wnioskować stan emocjonalny człowieka.
-Pozwala to na wykorzystanie bardzo zróżnicowanych podejść, od oceny wyglądu, przez analizę zachowań, aż po pomiary aktywności elektrycznej w organizmie.
+Pozwala to na wykorzystanie bardzo zróżnicowanych podejść, od oceny wyglądu, przez analizę zachowań, aż po pomiary aktywności elektrycznej w~organizmie.
 Z tego powodu do automatycznego rozpoznawania emocji wykorzystuje się różnoraką aparaturę oraz podejścia.
 
-Poniżej znajduje się opis najczęściej stosowanych metod\cite{Varghese2015, Dzedzickis2020}, ich wady oraz zalety.
+Poniżej znajduje się opis najczęściej stosowanych metod~\cite{Varghese2015, Dzedzickis2020}, ich wady oraz zalety.
 
 \subsection{Wyraz twarzy}\label{subsec:wyraz-twarzy}
-Twarz
+Ludzka twarz jest bardzo znaczącym źródłem informacji i~odgrywa dużą rolę w~komunikacji niewerbalnej.
+Na jej podstawie można oceniać między innymi: płeć, wiek, pochodzenie etniczne, czy stan emocjonalny~\cite{Calvo2015}.
+Dzięki temu twarz jest bardzo popularnym źródłem w~automatycznym rozpoznawaniu emocji, z~początkami prac sięgającymi lat 90 XX wieku.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.10]{face_pipeline}
-    \caption{Schemat systemu rozpoznającego emocje na podstawie twarzy\cite{Ko2018}.}
+    \caption{Schemat systemu rozpoznającego emocje na podstawie twarzy. \textit{Źródło:~\cite{Ko2018}}}
     \label{fig:face-pipeline}
 \end{figure}
 
 Rysunek~\ref{fig:face-pipeline} przedstawia ogólny schemat systemu rozpoznającego emocje na podstawie wyrazu twarzy.
 Na wejściu program otrzymuje pojedyncze zdjęcie lub nagranie zawierające twarz.
-Pierwszym krokiem jest wykrycie twarzy w dostarczonym źródle, może być ich wiele.
+Pierwszym krokiem jest wykrycie twarzy.
+W dostarczonym źródle może być ich wiele.
 Następnie przeprowadza się proces ekstrakcji charakterystycznych miejsc.
+Po uzyskaniu danych o~twarzy zostają one przetworzone przez algorytm uczenia nadzorowanego.
+
+Jedno z~popularnych podejść rozpoznaje emocje na podstawie Facial Action Coding System (FACS)~\cite{Ekman1978}.
+Zbiór ten zawiera, w~zależności od wersji, od 33 do 44 tak zwanych Action Units (AU).
+Powstały one przy pomocy stymulacji elektrycznej mięśni twarzy, które biorą udział w~wyrażaniu emocji.
+Dzięki temu uzyskano obiektywne ruchy mięśni o~różnej intensywności (zależnej od napięcia prądu).
+
+Sam zbiór nie zawiera ścisłego określenia połączeń AU i~odpowiadającym im emocjom, a~jedynie hipotezy.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.55]{action_units}
+    \caption{Przykłady różnych Action Units w~trzech częsciach twarzy. \textit{Źródło:~\cite{Ko2018}}}
+    \label{fig:action-units}
+\end{figure}
+
+Inne podejścia bazują na zbiorach, w~których osoby były proszone o~wyrażenie danej emocji.
+Pozyskane w~ten sposób dane mają jednak wadę w~postaci zbyt intensywnego wyrazu twarzy, w~dodatku opartych na stereotypach.
+Osoba poproszona o~to, aby pokazała zdziwienie, zazwyczaj wygląda zupełnie inaczej, niż gdy jest naprawdę zdziwiona.
+Nawet dobrze wyszkolony aktor nie jest w~stanie dokładnie odwzorować naturalnej reakcji~\cite{Calvo2015}.
+Powoduje to, że modele szkolone na takich zbiorach nie są w~stanie rozpoznawać emocji wyrażanych w~sposób ,,normalny``.
+Jedną z~możliwości zapobiegania temu zjawisku jest tworzenie zbiorów, w~których emocje są wywoływane przez prawdziwe zdarzenia, a~nie odgrywane przez aktorów.
+
+Główną zaletą rozpoznawania emocji na podstawie twarzy jest stosunkowa prostota, aparaty są tanie i~powszechnie dostępne.
+Dodatkowo zbieranie danych nie wymaga kontaktu fizycznego i~nie powoduje dyskomfortu.
+Same wyrazy twarzy dla wielu emocji jest uniwersalny między członkami różnych kultur, płci i~niezależny od wieku.
+
+Mimo to z~tym podejściem wiąże się wiele problemów.
+Począwszy od trudności wynikających z~samego rozpoznawania twarzy, na przykład różne oświetlenie, czy kąt, pod jakim znajduje się twarz.
+Następnie pojawiają się problemy związane z~emocjami: osoba jest w~stanie celowo nie wyrażać żadnych emocji lub mogą być one bardzo nikłe.
+
+
+\subsection{Postawa ciała i~gestykulacja}\label{subsec:postawa-ciaa-i-gestykulacja}
+
+Drugim bardzo ważnym źródłem informacji o~emocjach jest postawa ciała człowieka, jego gesty lub ich brak.
+Stanowią one bardzo ważną część komunikacji niewerbalnej, ruch dłoni jest drugim co do wielkości źródłem, mówiącym o~stanie emocjonalnym, po wyrazie twarzy~\cite{Noroozi2021}.
+Co więcej, postawa ciała pomaga w~zmaganiu się z~aktualnie odczuwanymi emocjami~\cite{Kleinsmith2013}.
+
+Jednym z~powszechnie stosowanych sposobów śledzenia ruchu ciała są kamery termowizyjne~\cite{Calvo2015}.
+Pomiary są możliwe dzięki odblaskowym płytkom, które umieszczane są na odzieży.
+Pozwala to na zapis ruchu w~trójwymiarowej przestrzeni.
+Tego typu podejście wymaga jednak noszenia specjalnego stroju, a~dokładność jest zależna od ilości znaczników.
+Z tego powodu mierzenie ruchu dłoni, a~zwłaszcza palców jest problematyczne.
+Z drugiej strony zbieranie jest mniej danych, a~ich przetwarzanie jest łatwiejsze.
+Dodatkowo zapewniona jest anonimowość badanych.
+
+Dzięki rozwojowi widzenia maszynowego możliwe stało się również używanie zwykłych kamer.
+Takie podejście zapewnia większą swobodę, nie wymaga specjalnego stroju.
+Co najważniejsze pozwala na dokładniejsze odwzorowanie ruchów, zwłaszcza palców~\cite{Calvo2015}.
+To podejście również musi zmagać się z~problemami typowymi dla rozpoznawania obrazów: oświetlenie, kolor skóry, ubrania mogą negatywnie wpływać na dokładność.
+
+Rysunek~\ref{fig:body-representation} przedstawia dwa sposoby modelowania ludzkiego ciała w~komputerach~\cite{Noroozi2021}.
+
+Po lewej stronie widnieje model oparty na częściach ciała (ang.~\textit{part based model}).
+Każda część jest rozpoznawana osobno na podstawie wiedzy o~budowie ludzkiego ciała.
+Otrzymywana jest reprezentacja dwuwymiarowa.
+
+Po prawej stronie przedstawiono model szkieletowy (ang.~\textit{kinematic model}).
+W tej reprezentacji ciało jest zbiorem wierzchołków połączonych krawędziami, przez co można je reprezentować jako graf~\cite{Noroozi2021}.
+Wierzchołki interpretowane są jako stawy, które posiadają pewne stopnie swobody, odpowiednie dla danej części ciała.
+Pozwala to na złożoną reprezentację w~przestrzeni trójwymiarowej.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.55]{body_representation}
+    \caption{Sposoby reprezentowania ciała w~komputerze: zbiór częsci ciała (lewa strona) oraz reprezentacja szkieletowa (prawa strona). \textit{Źródło:~\cite{Noroozi2021}}}
+    \label{fig:body-representation}
+\end{figure}
+
+Po uzyskaniu reprezentacji ciała, w~systemie następuje proces rozpoznawania postawy, a~następnie oceny emocji.
+Używa się do tego zarówno statycznych obrazów, jak i~nagrań ruchu\cite{Noroozi2021, Kleinsmith2013}.
+
+
+\subsection{Mowa}\label{subsec:mowa}
+
+Poza niewerbalnymi źródłami, emocje można również rozpoznawać na podstawie mowy.
+Ludzki głos stanowi bardzo bogate źródło informacji.
+Pozwala na wnioskowanie o~wieku, płci, stanie emocjonalnym, osobowości dialekcie i~pochodzeniu mówcy~\cite{Wani2021}.
+
+W porównaniu do poprzednich źródeł mowa jest o~wiele bardziej podatna na zakłócenia, szum, hałasy w~tle.
+Wymaga więc dokładniejszego procesu oczyszczania.
+Bardzo ważna jest również normalizacja danych.
+Zakres podstawowej częstotliwości głosu, około 50 — 500 Hz, jest o~wiele większe niż różnica między wypowiedzią neutralną i~w~stanie złości, która wynosi około 68 Hz~\cite{Calvo2015}.
+
+Po oczyszczeniu i~normalizacji następuje proces ekstrakcji cech niskiego poziomu (ang.~\textit{low-level descriptors (LLD)}).
+Są to wartości oparte o~częstotliwość głosu oraz o~zmiany w~sposobie wypowiedzi (na przykład szybkość mówienia lub poziom głośności).
+Sama ilość cech niskiego poziomu nie jest z~góry określona i~może być różna w~zależności od podejścia.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{speech-signal}
+    \caption{Przykładowy sygnał mowy z~zaznaczonymi jitter i~shimmer. \textit{Źródło:~\cite{Teixeira2013}}}
+    \label{fig:speech-signal}
+\end{figure}
+
+Do najpopularniejszych LLD należą: fundamental frequency (F0), Mel-frequency cepstral coefficients (MFCCs), jitter, shimmer, harmonic-to-noise ratio oraz wartości z~widma akustycznego~\cite{Calvo2015, Abdelwahab2014}.
+
+Po uzyskaniu cech niskiego poziomu można zastosować funkcje i~miary statystyczne, takie jak średnie i~odchylenia, aby otrzymać tak zwane cechy wysokiego poziomu (ang.~\textit{high-level descriptors (HLD)}).
+
+Podobnie jak wyrazy twarzy, mowa jest zależna od kultury i~pochodzenia osoby.
+Dodatkowo wyszkolona osoba jest w~stanie kontrolować wymowę w~taki sposób, aby ukrywać odczuwane emocje lub udawać inne.
+
+\subsection{Sygnały biofizyczne}\label{subsec:sygnaly-biofizyczne}
+
+Emocje wywołują również zmiany, których nie da się zaobserwować za pomocą ludzkich zmysłów.
+Różne stany emocjonalne wpływają między innymi na szybkość bicia serca, wydzielanie potu, oddech, temperaturę ciała~\cite{Calvo2015}.
+Są to parametry, które można zmierzyć i~wnioskować na ich podstawie zmiany zachodzące w~organizmie.
+
+Jednym z~najpopularniejszych sposobów jest elektrokardiografia (EKG), czyli mierzenie aktywności elektrycznej serca.
+Do pomiarów używa się elektrod umieszczonych na skórze, najczęściej jest ich 3 lub 12.
+Analiza sygnału odbywa się na podstawie załamków P, Q, R, S, T\@.
+Rysunek~\ref{fig:ecg-pqrst} przedstawia przykładowy sygnał EKG\@.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{ecg-pqrst}
+    \caption{Przykładowy sygnał EKG z~zaznaczonymi załamkami. \textit{Źródło:~\cite{Dzedzickis2020}}}
+    \label{fig:ecg-pqrst}
+\end{figure}
+
+Jako pierwszy występuje załamek P, który oznacza depolaryzację mięśnia przedsionków.
+Potem następuje zespół QRS opisujący depolaryzację mięśnia komór.
+Po nim pojawia się załamek T odpowiadający repolaryzacji komór.
+
+W automatycznym rozpoznawaniu emocji najczęściej bierze się pod uwagę zespół QRS oraz odległości między załamkami R (ang.~\textit{R-R interval / inter-beat interval}), które wykorzystuje się w~analizie zmienności rytmu zatokowego (ang.~\textit{heart rate variability (HRV)})~\cite{Calvo2015}.
+
+Drugim często używanym sygnałem biofizycznym jest reakcja skórno-galwaniczna, powszechnie używa się dwóch skrótów: GSR (ang.~\textit{galvanic skin response}) lub EDA (ang.~\textit{electrodermal activity}).
+Opisuje on zmiany w~przewodnictwie skóry spowodowane aktywnością gruczołów potowych.
+Prowadzi to do różnic w~wilgotności i~w~następstwie do zmiany oporu elektrycznego~\cite{Dzedzickis2020}.
+
+Pomiary wykonuje się za pomocą elektrod, które mogą być umieszczone w~dowolnym miejscu na skórze.
+Zazwyczaj wykorzystuje się miejsca najbardziej czułe na zmiany emocjonalne: dłonie oraz podeszwy stóp~\cite{Calvo2015}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.6]{gsr-example}
+    \caption{Przykładowy sygnał GSR. Czerwone linie oznaczają momenty pojawiania się stymulantu. \textit{Źródło:~\cite{Dzedzickis2020}}}
+    \label{fig:gsr-example}
+\end{figure}
+
+Rysunek~\ref{fig:gsr-example} przedstawia przykładowy sygnał GSR, który składa się z~dwóch głównych komponentów~\cite{Dzedzickis2020}.
+Szarym kolorem zaznaczono tonic component, który zmienia się powoli i~zależy głównie od reakcji na czynniki środowiska (temperatura, wilgotność powietrza itp.).
+Na niebiesko oznaczono phasic component, przejawiający się jako krótkie piki w~odpowiedzi na stan emocjonalny.
+
+Poza elektrokardiografią oraz reakcją skórno-galwaniczną stosuje się również wiele innych podejść~\cite{Dzedzickis2020, Calvo2015}.
+
+Fotopletyzmografia (ang.~\textit{photoplethysmography (PPG)}) jest alternatywnym sposobem mierzenia aktywności.
+Do pomiarów używa się światła, które reaguje na zmiany w~ilości krwi w~tkankach.
+Różnice w~odbijanym lub przepuszczanym świetle odpowiadają uderzeniom serca.
+
+Elektroencefalografia (EEG) jest używana do badania aktywności mózgu na podstawie fal $\delta, \theta, \alpha, \beta, \gamma$.
+Pomiary odbywają się za pomocą elektrod umieszczonych na głowie.
+Zazwyczaj używa się 8, 16 lub 32 pary.
+
+Elektromiografia (EMG) służy do pomiaru aktywności elektrycznej mięśni.
+Podczas skurczu mięśni pojawia się napięcie, które można zmierzyć na powierzchni skóry przy pomocy elektrod.
+EMG jest zazwyczaj stosowane dla mięśni twarzy.
+
+Oddychanie jest również sygnałem biofizycznym.
+Pomiary wykonuje się zazwyczaj za pomocą opaski wokół klatki piersiowej, która mierzy jej ruch wywołany wdechami i~wydechami.
+
+Dużym problemem sygnałów biofizycznych są zakłócenia związane z~aktywnością człowieka.
+Ruch ma duży wpływ na pracę serca, która nie zmienia się liniowo w~stosunku do wysiłku.
+Kichnięcie powoduje w~organizmie reakcję podobną do odczuwania strachu, mimo że osoba kichająca raczej nie jest przestraszona~\cite{Calvo2015}.
+
+
+\section{Reprezentacja emocji w~komputerze}\label{sec:reprezentacja-emocji-w-komputerze}
+
+Po uzyskaniu danych należy je przypisać do odczuwanych emocji.
+Jest to typowe podejście wykorzystywane w~uczeniu nadzorowanym.
+
+Najprostszym sposobem jest przydzielenie im pewnej kategorii, na przykład: strach, złość, radość, smutek itp.
+W automatycznym rozpoznawaniu emocji ich liczba jest zazwyczaj niewielka i~wynosi od 4 do 8~\cite{Dzedzickis2020}.
+Czasem są to również klasyfikatory binarne, które przewidują jedynie czy dane należą do danej klasy, czy nie.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.35]{database_example}
+    \caption{Przykładowa baza danych zawierająca zdjęcia twarzy przedstawiające podstawowe emocje. \textit{Źródło:~\cite{Li2017}}}
+    \label{fig:database-example}
+\end{figure}
+
+Najczęściej wykorzystuje się kategorie należące do tak zwanych podstawowych emocji.
+Zostały one zaproponowane między innymi przez Paula Ekmana w~1971 roku~\cite{Ekman1971}.
+Należą do nich: radość, smutek, złość, zdziwienie, strach oraz wstręt.
+
+Inne popularne podejścia reprezentują emocje za pomocą dwóch lub trzech ciągłych wartości liczbowych.
+Stany emocjonalne są przedstawione w~przestrzeni, dzięki czemu można reprezentować o~wiele więcej kategorii, w~sposób bardziej płynny i~dokładny.
+
+Wiele podejść opiera się na dwuwymiarowym modelu zaproponowanym przez Jamesa Russella~\cite{Russell1980}.
+Emocje w~tym modelu reprezentowane są za pomocą wartości opisujących przyjemność odczuwanej emocji (ang.~\textit{valence}) oraz pobudzenie jakie wywołuje (ang.~\textit{arousal}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{circumplex_model}
+    \caption{Kołowy model oparty o~model Russella. \textit{Źródło:~\cite{Dzedzickis2020}}}
+    \label{fig:circumplex-model}
+\end{figure}
+
+Sam model jest zazwyczaj w~kształcie koła, które może być podzielone na wycinki przedstawiające emocje.
+Punkt leżący w~danym wycinku przedstawia odpowiednią emocję.
+Na kole można również wyznaczyć punkty, które są traktowane jako centroidy.
+
+Dwuwymiarowy model nie jest jednak w~stanie wystarczająco rozróżniać niektóre emocje.
+Przykładowo strach oraz złość są reprezentowane tak samo: wysokie pobudzenie i~niska przyjemność.
+Aby poprawić rozpoznawanie stanów emocjonalnych, inne podejścia dodają trzeci wymiar utożsamiany z~dominacją, jaką wywiera dana emocja~\cite{Calvo2015}.
+
+Samo przypisywanie emocji do danych odbywa się za pomocą dwóch podejść~\cite{Calvo2015}.
+Pierwsze z~nich opiera się na wyszkolonych obserwatorach, którzy oceniają stan emocjonalny badanej osoby.
+
+Nie zawsze jest to jednak możliwe, dlatego drugim powszechnie stosowanym sposobem jest samoocena.
+Metoda ta jest prostsza i~pozwala na klasyfikacje emocji w~sygnałach biofizycznych.
+Jest jednak bardziej zawodna, ponieważ osoba może źle sklasyfikować odczuwaną emocje, lub niedokładnie ocenić moment, w~którym do niej doszło.
+
+\section{Modalność w~modelach predykcji emocji}\label{sec:modalnosc-w-modelach-predykcji-emocji}
+
+Początkowo modele automatycznej predykcji emocji opierały się wyłącznie na jednym źródle informacji, były to zatem systemy jednomodalne.
+Ten trend był tym bardziej wzmacniany przez skupienie się na rozpoznawaniu emocji na podstawie twarzy.
+Takie podejście ma jednak jedną główną wadę, system nie jest w~stanie rozpoznawać emocji, gdy brakuje danych wejściowych.
+Zdarza się, że twarz jest zakryta, osoba nic nie mówi lub stoi nieruchomo.
+Aby zapobiec temu problemowi oraz przez chęć uzyskania lepszych wyników rozpoczęto prace nad systemami wykorzystującymi więcej niż jedno źródło informacji~\cite{Calvo2015}.
+
+Model wielomodalny to taki, który wykorzystuje co najmniej dwa różne źródła informacji.
+Może to być twarz oraz mowa, gestykulacja i~sygnały biofizyczne, lub wszystkie na raz.
+Tego typu systemy o~wiele rzadziej napotykają problem braku danych oraz zapewniają lepsze wyniki~\cite{DMello2012}.
+
+Systemy wielomodalne zmagają się jednak z~innymi problemami.
+Największy to łączenie ze sobą danych, które wymagają różnych okienek czasowych do analizy.
+Film może być analizowany na podstawie pojedynczych klatek, jednak sygnały biofizyczne lub mowa wymagają zazwyczaj większej ilości czasu, aby dać wartościowe dane.

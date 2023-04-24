@@ -8,6 +8,7 @@
 \usepackage[square,numbers]{natbib}
 \usepackage{doi}
 \usepackage{indentfirst}
+\usepackage[justification=centering]{caption}
 \graphicspath{ {./images/} }
 
 %setup interactive table of contents and references
@@ -57,9 +58,11 @@
         %\include{dedication}        % include a dedication.tex file
         %\include{acknowledgements}  % include an acknowledgements.tex file
         \include{abstract}           % include the abstract
-        \include{introduction}       % include the introduction
         \tableofcontents             % generate and include a table of contents
 
+        % include the introduction
+        \addcontentsline{toc}{chapter}{Wstęp}
+        \include{introduction}
         %now include the files of latex for each of the chapters
         \include{chapter1}
 
@@ -68,13 +71,12 @@
         %\include{appendix1}
         %\include{appendix2}
 
+        \addcontentsline{toc}{chapter}{Bibliografia} % add the Bibliography to the contents page
+        \bibliography{refs}        % use a bibtex bibliography file refs.bib
+        \bibliographystyle{unsrtnat}  % use the plain bibliography style
 
         \listoffigures              % generate and include a list of figures
         \addcontentsline{toc}{chapter}{Spis rysunków} % add a list of figures to the contents page
-
-        \bibliography{refs}        % use a bibtex bibliography file refs.bib
-        \bibliographystyle{unsrtnat}  % use the plain bibliography style
-        \addcontentsline{toc}{chapter}{Bibliografia} % add the Bibliography to the contents page
 
 \end{document}
 
