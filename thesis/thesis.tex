@@ -61,22 +61,35 @@
         \tableofcontents             % generate and include a table of contents
 
         % include the introduction
+        \clearpage                   % makes introduction appear on correct page in TOC
+        \phantomsection              % makes introduction appear on correct page in TOC
         \addcontentsline{toc}{chapter}{Wstęp}
         \include{introduction}
         %now include the files of latex for each of the chapters
         \include{chapter1}
+        \include{chapter2}
+        \include{chapter3}
+
+        % include the conclusion
+        \clearpage                   % makes conclusion appear on correct page in TOC
+        \phantomsection              % makes conclusion appear on correct page in TOC
+        \addcontentsline{toc}{chapter}{Podsumowanie}
+        \include{conclusion}
 
         %now enable appendix numbering format and include any appendices
         %\appendix
         %\include{appendix1}
         %\include{appendix2}
 
-        \addcontentsline{toc}{chapter}{Bibliografia} % add the Bibliography to the contents page
+
         \bibliography{refs}        % use a bibtex bibliography file refs.bib
         \bibliographystyle{unsrtnat}  % use the plain bibliography style
+        \addcontentsline{toc}{chapter}{Bibliografia} % add the Bibliography to the contents page
 
         \listoffigures              % generate and include a list of figures
         \addcontentsline{toc}{chapter}{Spis rysunków} % add a list of figures to the contents page
 
-\end{document}
+        \listoftables               % generate and include a list of tables
+        \addcontentsline{toc}{chapter}{Spis tabel} % add a list of tables to the contents page
 
+\end{document}

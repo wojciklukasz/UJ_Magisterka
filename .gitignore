@@ -257,6 +257,7 @@ cython_debug/
 *.blg
 *.lof
 *.toc
+*.lot
 thesis/pdf_out/*.out
 /thesis/images/
 
