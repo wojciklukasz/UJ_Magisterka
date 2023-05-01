@@ -262,8 +262,8 @@ thesis/pdf_out/*.out
 /thesis/images/
 
 # Project specific
-/dataset/BIRAFFE2/
+/code/dataset/BIRAFFE2/
 *.csv
 /envs/
-/dataset/test.ipynb
+/code/dataset/test.ipynb
 
