@@ -8,7 +8,9 @@ warnings.filterwarnings("ignore")
 
 
 # noinspection PyTypeChecker
-def process_ecg(signal: pd.Series) -> pd.DataFrame:
+def process_ecg(biosigs: pd.DataFrame, start: float, end: float) -> pd.DataFrame:
+    signal = biosigs[biosigs['TIMESTAMP'].between(start, end)]['ECG']
+
     # Clean the signal, then extract peaks and rate
     cleaned_signal = nk.ecg_clean(signal, sampling_rate=1000, method='pantompkins1985')
     peaks, _ = nk.ecg_peaks(cleaned_signal, sampling_rate=1000, method='pantompkins1985', correct_artifacts=True)
@@ -26,7 +28,9 @@ def process_ecg(signal: pd.Series) -> pd.DataFrame:
     return output
 
 
-def process_eda(signal: pd.Series) -> pd.DataFrame:
+def process_eda(biosigs: pd.DataFrame, start: float, end: float) -> pd.DataFrame:
+    signal = biosigs[biosigs['TIMESTAMP'].between(start, end)]['EDA']
+
     # Process the raw signal
     processed, info = nk.eda_process(signal, sampling_rate=1000, method='neurokit')
 
@@ -41,14 +45,12 @@ def process_eda(signal: pd.Series) -> pd.DataFrame:
     return analyzed
 
 
-def calculate_averages(biosigs: pd.Series, procedure: pd.Series) -> pd.DataFrame:
+def calculate_averages(biosigs: pd.DataFrame, procedure: pd.DataFrame) -> pd.DataFrame:
     start = procedure.iloc[0]['TIMESTAMP']
     end = procedure.iloc[-1]['TIMESTAMP']
 
-    average_signal_ecg = biosigs[biosigs['TIMESTAMP'].between(start, end)]['ECG']
-    average_processed_ecg = process_ecg(average_signal_ecg)
-    average_signal_eda = biosigs[biosigs['TIMESTAMP'].between(start, end)]['EDA']
-    average_processed_eda = process_eda(average_signal_eda)
+    average_processed_ecg = process_ecg(biosigs, start, end)
+    average_processed_eda = process_eda(biosigs, start, end)
 
     averages = pd.concat([average_processed_ecg, average_processed_eda], axis=1)
     return averages
@@ -72,7 +74,8 @@ def process_data():
 
         # read data from BioSigs and Procedure
         biosigs = pd.read_csv(f'BIRAFFE2/biosigs/{sub}-BioSigs.csv', dtype=dtypes_biosigs)
-        procedure = pd.read_csv(f'BIRAFFE2/procedure/{sub}-Procedure.csv', sep=';', dtype=dtypes_procedure)
+        procedure = pd.read_csv(f'BIRAFFE2/procedure/{sub}-Procedure.csv', sep=';',
+                                dtype=dtypes_procedure)
 
         # delete useless and training entries
         procedure = procedure[procedure['COND'].notnull()]
@@ -97,11 +100,8 @@ def process_data():
                 continue
 
             try:
-                ecg_signal = biosigs[biosigs['TIMESTAMP'].between(start, end)]['ECG']
-                ecg_processed = process_ecg(ecg_signal)
-
-                eda_signal = biosigs[biosigs['TIMESTAMP'].between(start, end)]['EDA']
-                eda_processed = process_eda(eda_signal)
+                ecg_processed = process_ecg(biosigs, start, end)
+                eda_processed = process_eda(biosigs, start, end)
 
             except (ValueError, ZeroDivisionError, IndexError, TypeError, AttributeError):
                 print(f'Error in case {c} condition: {procedure.iloc[c]["COND"]} starting at {start}')
