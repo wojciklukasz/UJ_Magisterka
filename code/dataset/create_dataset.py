@@ -41,21 +41,34 @@ def process_eda(signal: pd.Series) -> pd.DataFrame:
     return analyzed
 
 
-data = pd.DataFrame()
+def calculate_averages(biosigs: pd.Series, procedure: pd.Series) -> pd.DataFrame:
+    start = procedure.iloc[0]['TIMESTAMP']
+    end = procedure.iloc[-1]['TIMESTAMP']
 
-try:
+    average_signal_ecg = biosigs[biosigs['TIMESTAMP'].between(start, end)]['ECG']
+    average_processed_ecg = process_ecg(average_signal_ecg)
+    average_signal_eda = biosigs[biosigs['TIMESTAMP'].between(start, end)]['EDA']
+    average_processed_eda = process_eda(average_signal_eda)
+
+    averages = pd.concat([average_processed_ecg, average_processed_eda], axis=1)
+    return averages
+
+
+def process_data():
+    dtypes_biosigs = {'TIMESTAMP': np.float64, 'ECG': np.float64, 'EDA': np.float64}
+    dtypes_procedure = {'TIMESTAMP': np.float64, 'ID': str, 'COND': str,
+                        'IADS-ID': str, 'IAPS-ID': str, 'ANS-VALENCE': np.float64,
+                        'ANS-AROUSAL': np.float64, 'ANS-TIME': str, 'EVENT': str}
+
+    data = pd.DataFrame()
     sub_num = 1
+
     # go through every subject
     for file in os.listdir('BIRAFFE2/procedure'):
         # extract subject ID
         sub = file[:6]
-        print(f'Processing data for {sub} ({sub_num}/117)')
+        print(f'\n\tProcessing data for {sub} ({sub_num}/117)')
         sub_num += 1
-
-        dtypes_biosigs = {'TIMESTAMP': np.float64, 'ECG': np.float64, 'EDA': np.float64}
-        dtypes_procedure = {'TIMESTAMP': np.float64, 'ID': str, 'COND': str,
-                            'IADS-ID': str, 'IAPS-ID': str, 'ANS-VALENCE': np.float64,
-                            'ANS-AROUSAL': np.float64, 'ANS-TIME': str, 'EVENT': str}
 
         # read data from BioSigs and Procedure
         biosigs = pd.read_csv(f'BIRAFFE2/biosigs/{sub}-BioSigs.csv', dtype=dtypes_biosigs)
@@ -64,6 +77,13 @@ try:
         # delete useless and training entries
         procedure = procedure[procedure['COND'].notnull()]
         procedure = procedure[procedure['COND'] != 'train']
+
+        # calculate averages
+        try:
+            averages = calculate_averages(biosigs, procedure)
+        except ValueError:
+            print(f'{sub} bio signals data is incomplete. Skipping...')
+            continue
 
         # go through every image and sound combination
         cases = procedure.shape[0]
@@ -84,12 +104,7 @@ try:
                 eda_processed = process_eda(eda_signal)
 
             except (ValueError, ZeroDivisionError, IndexError, TypeError, AttributeError):
-                if c < 2:
-                    print(f'{sub} biosignals data is incomplete. Skipping...')
-                    break
                 print(f'Error in case {c} condition: {procedure.iloc[c]["COND"]} starting at {start}')
-                if biosigs[biosigs['TIMESTAMP'].between(start, end)].shape[0] == 0:
-                    print('No data points found in a given time window')
                 continue
 
             # add features to predict
@@ -99,18 +114,25 @@ try:
             pred_frame = pd.DataFrame(data=pred, index=[0])
 
             # append features to final DataFrame
-            features = pd.concat([ecg_processed, eda_processed, pred_frame], axis=1)
+            features = pd.concat([ecg_processed, eda_processed], axis=1)
+            for column in averages.columns:
+                features[f'AVG_{column}'] = averages[column][0] - features[column]
+            features = pd.concat([features, pred_frame], axis=1)
+
             data = pd.concat([data, features])
 
     # delete NaN values (some columns are always NaN)
-    # data.dropna(inplace=True, axis=1)
+    data.dropna(inplace=True, axis=1)
 
     # save to file
     print('Writing data to combined_dataset.csv')
     data.to_csv('combined_dataset.csv', index=False)
 
+
+try:
+    process_data()
 except FileNotFoundError:
     print('\n    ------------------------ ERROR ------------------------')
     print('''    This script requires two directories in ./BIRAFFE2:
-    biosigs - containing biosignals csv files
+    biosigs - containing bio signals csv files
     procedure - containing procedure csv files''')
