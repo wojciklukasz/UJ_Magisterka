@@ -81,10 +81,11 @@
         %\include{appendix1}
         %\include{appendix2}
 
-
+        \clearpage                   % makes bibliography appear on correct page in TOC
+        \phantomsection              % makes bibliography appear on correct page in TOC
+        \addcontentsline{toc}{chapter}{Bibliografia} % add the bibliography to the contents page
         \bibliography{refs}        % use a bibtex bibliography file refs.bib
         \bibliographystyle{unsrtnat}  % use the plain bibliography style
-        \addcontentsline{toc}{chapter}{Bibliografia} % add the Bibliography to the contents page
 
         \listoffigures              % generate and include a list of figures
         \addcontentsline{toc}{chapter}{Spis rysunków} % add a list of figures to the contents page
