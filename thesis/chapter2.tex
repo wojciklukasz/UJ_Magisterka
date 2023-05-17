@@ -1,11 +1,16 @@
 \chapter{Uczenie maszynowe}\label{ch:uczenie-maszynowe}
 
 \section{Podstawy uczenia maszynowego}\label{sec:podstawy-uczenia-maszynowego}
-Podstawy.
+%Podstawy.
+%SVM, RFC i scikit-learn.
 
-SVM, RFC i scikit-learn.
+
+W klasyfikacji jako funkcja straty często stosowana jest entropia krzyżowa~\textit{(ang. cross-entropy loss)}.
+Jej ogólny wzór wygląda następująco~\cite{Russell2020}:
+\[H(P,Q) = \int P(x) \log Q(x)dx\]
+gdzie \textit{P} oznacza prawdziwe wartości zbioru testowego \textit{\(P^*(x, y)\)}, a \textit{Q} wartości przewidziane przez model \textit{\(P_w(y | x)\)}.
+Celem uczenia jest zmiana \textit{w} tak, aby zminimalizować \(H(P^*(x, y),P_w(y | x))\).
 
 \section{Sztuczne sieci neuronowe}\label{sec:sztuczne-sieci-neuronowe}
-Sieci.
-
-TensorFlow.
+%Sieci.
+%TensorFlow.
