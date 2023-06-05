@@ -32,7 +32,7 @@ def process_eda(biosigs: pd.DataFrame, start: float, end: float) -> pd.DataFrame
     signal = biosigs[biosigs['TIMESTAMP'].between(start, end)]['EDA']
 
     # Process the raw signal
-    processed, info = nk.eda_process(signal, sampling_rate=1000, method='neurokit')
+    processed, _ = nk.eda_process(signal, sampling_rate=1000, method='neurokit')
 
     # Extract features and add to output frame
     analyzed = nk.eda_intervalrelated(processed)
@@ -69,7 +69,7 @@ def process_data():
     for file in os.listdir('BIRAFFE2/procedure'):
         # extract subject ID
         sub = file[:6]
-        print(f'\n\tProcessing data for {sub} ({sub_num}/117)')
+        print(f'\n\tProcessing data for {sub} ({sub_num}/102)')
         sub_num += 1
 
         # read data from BioSigs and Procedure
@@ -125,7 +125,7 @@ def process_data():
     data.dropna(inplace=True, axis=1)
 
     # save to file
-    print('Writing data to combined_dataset.csv')
+    print('\n\nWriting data to combined_dataset.csv')
     data.to_csv('combined_dataset.csv', index=False)
 
 
