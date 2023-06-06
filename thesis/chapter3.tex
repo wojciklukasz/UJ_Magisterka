@@ -3,9 +3,9 @@
 \section{Zbiór danych}\label{sec:zbior-danych}
 
 W pracy wykorzystano gotowy zbiór danych o nazwie BIRAFFE2~\cite{Kutt2022}.
-Zawiera on zapisy elektrokardiografii (EKG), reakcji skórno-galwanicznej (EDA), wyrazów twarzy i ruchu dłoni, które zostały nagrane podczas prób wywołania emocji przez stymulanty audiowizualne i specjalnie przygotowane gry komputerowe.
-Dodatkowo w zbiorze zawarto subiektywną ocenę stymulantów w dwuwymiarowej przestrzeni przyjemności i pobudzenia (ang.~\textit{valence, arousal}), wyniki testu osobowości opartego o tak zwaną wielką piątkę (ang.~\textit{big five}) oraz ankiety o doświadczeniu z grami komputerowymi.
-Dane pochodzą od 102 osób w wieku od 18 do 26 lat, z czego 33\% badanych to kobiety~\cite{Kutt2022}.
+Zawiera on zapisy elektrokardiografii (EKG), reakcji skórno-galwanicznej (EDA), wyrazów twarzy i~ruchu dłoni, które zostały nagrane podczas prób wywołania emocji przez stymulanty audiowizualne i~specjalnie przygotowane gry komputerowe.
+Dodatkowo w~zbiorze zawarto subiektywną ocenę stymulantów w~dwuwymiarowej przestrzeni przyjemności i~pobudzenia (ang.~\textit{valence, arousal}), wyniki testu osobowości opartego o tak zwaną wielką piątkę (ang.~\textit{big five}) oraz ankiety o doświadczeniu z~grami komputerowymi.
+Dane pochodzą od 102 osób w~wieku od 18 do 26 lat, z~czego 33\% badanych to kobiety~\cite{Kutt2022}.
 
 \begin{figure}[h]
     \centering
@@ -14,35 +14,35 @@ Dane pochodzą od 102 osób w wieku od 18 do 26 lat, z czego 33\% badanych to ko
     \label{fig:BIRAFFE2-widget}
 \end{figure}
 
-Stymulanty audiowizualne prezentowane były w dwóch turach, z sesją gry komputerowej pomiędzy turami.
-Każdy stymulant prezentowany był przez 6 sekund, po czym badany miał 6 sekund na ocenę wywołanych emocji i następowało kolejne 6 sekund przerwy~\cite{Kutt2022}.
-Wizualne stymulanty wybrano ze zbioru IAPS~\cite{IAPS}, a dźwiękowe ze zbioru IADS~\cite{IADS}.
+Stymulanty audiowizualne prezentowane były w~dwóch turach, z~sesją gry komputerowej pomiędzy turami.
+Każdy stymulant prezentowany był przez 6 sekund, po czym badany miał 6 sekund na ocenę wywołanych emocji i~następowało kolejne 6 sekund przerwy~\cite{Kutt2022}.
+Wizualne stymulanty wybrano ze zbioru IAPS~\cite{IAPS}, a~dźwiękowe ze zbioru IADS~\cite{IADS}.
 
-W niniejszej pracy wykorzystano jedynie zapisy EKG oraz EDA z obu tur prezentacji stymulantów.
+W niniejszej pracy wykorzystano jedynie zapisy EKG oraz EDA z~obu tur prezentacji stymulantów.
 
 \section{Przygotowanie danych}\label{sec:przygotowanie-danych}
 
 \subsection{Oczyszczanie i ekstrakcja cech}\label{subsec:oczyszczanie-i-ekstrakcja-cech}
 
-Cały system automatycznej predykcji emocji, opisany w tej pracy, został napisany w języku Python.
-Aby oczyścić dane i dokonać ekstrakcji cech (ang.~\textit{feature extraction}) użyto biblioteki NeuroKit\footnote{https://neuropsychology.github.io/NeuroKit/}~\cite{Neurokit}.
-Zawiera ona wiele funkcji i narzędzi pozwalających na pracę z sygnałami biofizycznymi.
+Cały system automatycznej predykcji emocji, opisany w~tej pracy, został napisany w~języku Python.
+Aby oczyścić dane i~dokonać ekstrakcji cech (ang.~\textit{feature extraction}) użyto biblioteki NeuroKit\footnote{https://neuropsychology.github.io/NeuroKit/}~\cite{Neurokit}.
+Zawiera ona wiele funkcji i~narzędzi pozwalających na pracę z~sygnałami biofizycznymi.
 
 Dane zostały podzielone na okienka o długości 18 sekund, co odpowiada pojawieniu się pojedynczego stymulanta audiowizualnego, czasu na subiektywną ocenę emocji oraz przerwie przed kolejnym stymulantem.
 Wartości odpowiadające treningowi nie były brane pod uwagę.
 
-Sygnały EKG były poddawane oczyszczaniu funkcją \texttt{ecg\_clean()} z wykorzystaniem metody zaproponowanej przez Pana i Tompkinsa~\cite{Pan1985}.
-Następnie znajdowano załamki R w zespole QRS, wykorzystując metodę zaproponowaną w tym samym artykule oraz funkcję \texttt{ecg\_peaks()}.
+Sygnały EKG były poddawane oczyszczaniu funkcją \texttt{ecg\_clean()} z~wykorzystaniem metody zaproponowanej przez Pana i~Tompkinsa~\cite{Pan1985}.
+Następnie znajdowano załamki R w~zespole QRS, wykorzystując metodę zaproponowaną w~tym samym artykule oraz funkcję \texttt{ecg\_peaks()}.
 Na ich podstawie obliczano średnią częstotliwość występowania załamków funkcją \texttt{ecg\_rate()} oraz wartości związane ze zmiennością rytmu zatokowego (ang.~\textit{heart rate variability, HRV}) stosując \texttt{hrv\_time()} oraz \texttt{hrv\_frequency()}.
 
-Podobnie jak EKG, sygnał EDA był na początku oczyszczany i wydzielono z niego tonic component, użyto do tego funkcję \texttt{eda\_process()}.
-Następnie funkcją \texttt{eda\_intervalrelated()} obliczono ilość wystąpień reakcji oraz ich średnią amplitudę.
+Podobnie jak EKG, sygnał EDA był na początku oczyszczany i~wydzielono z~niego tonic component, użyto do tego funkcję \texttt{eda\_process()}.
+Następnie obliczono ilość wystąpień reakcji oraz ich średnią amplitudę wykorzystując funkcję \texttt{eda\_intervalrelated()}.
 Kolejnym krokiem było obliczenie standardowego odchylenia dla tonic component.
-Następnie wykorzystano \texttt{eda\_sympathetic()} aby uzyskać wartości związane z sympathetic component, czyli wartościami w zakresie 0,0045 - 0,25 Hz~\cite{Posada2016}.
+Następnie wykorzystano \texttt{eda\_sympathetic()} aby uzyskać wartości związane z~sympathetic component, czyli wartościami w~zakresie 0,0045 - 0,25 Hz~\cite{Posada2016}.
 Na koniec obliczono autokorelację sygnału stosując \texttt{eda\_autocorr()}.
 
-W kolejnym kroku zastosowano powyższe metody dla sygnałów z przedziału od pierwszego do ostatniego stymulanta, które potraktowano jako średnią wartość, unikalną dla każdego badanego.
-Następnie odejmowano wartości uzyskane w każdym z okienek od średniej danej osoby.
+W kolejnym kroku zastosowano powyższe metody dla sygnałów z~przedziału od pierwszego do ostatniego stymulanta, które potraktowano jako średnią wartość, unikalną dla każdego badanego.
+Następnie odejmowano wartości uzyskane w~każdym z~okienek od średniej danej osoby.
 Miało to na celu uzyskanie danych o zmianie stanu badanego podczas oglądania stymulanta względem normy.
 
 Dla każdego okienka przypisano odpowiadające mu dwie wartości uzyskane przez subiektywną ocenę.
@@ -50,12 +50,12 @@ Były to przyjemność emocji (ang.~\textit{valence}) oraz pobudzenie (ang.~\tex
 
 \subsection{Grupowanie}\label{subsec:grupowanie}
 
-Po uzyskaniu cech przeprowadzono proces grupowania (ang.~\textit{clustering}), w celu zmiany problemu z regresji do klasyfikacji dla kilku klas.
-Wykorzystano do tego algorytm K-Means, który jest przykładem uczenia nienadzorowanego i został zaproponowany przez Lloyda~\cite{Lloyd1982}.
-Sama użyta funkcja \texttt{KMeans()} pochodzi z biblioteki scikit-learn\footnote{https://scikit-learn.org/}~\cite{scikit-learn}.
+Po uzyskaniu cech przeprowadzono proces grupowania (ang.~\textit{clustering}), w~celu zmiany problemu z~regresji do klasyfikacji dla kilku klas.
+Wykorzystano do tego algorytm K-Means, który jest przykładem uczenia nienadzorowanego i~został zaproponowany przez Lloyda~\cite{Lloyd1982}.
+Sama użyta funkcja \texttt{KMeans()} pochodzi z~biblioteki scikit-learn\footnote{https://scikit-learn.org/}~\cite{scikit-learn}.
 
 Po obliczeniu centroidów oraz uzyskaniu grup ręcznie przypisano im emocje na podstawie modelu kołowego z~\cite{Kollias2019}.
-W pracy stworzono modele dla 8, 6 i 4 emocji.
+W pracy stworzono modele dla 8, 6 i~4 emocji.
 
 \begin{figure}[h]
     \centering
@@ -83,12 +83,12 @@ W pracy stworzono modele dla 8, 6 i 4 emocji.
         \caption{4 emocje}
         \label{fig:clusters-4}
     \end{subfigure}
-    \caption{Uzyskane grupy i przypisane im emocje.}
+    \caption{Uzyskane grupy i~przypisane im emocje.}
     \label{fig:clusters-all}
 \end{figure}
 
 \section{Wyniki}\label{sec:wyniki}
-Porównanie wyników różnych modeli scikit-learn i TensorFlow oraz modalności, kilka tabelek.
+Porównanie wyników różnych modeli scikit-learn i~TensorFlow oraz modalności, kilka tabelek.
 
 \begin{table}[h!]
     \centering
