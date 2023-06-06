@@ -1,16 +1,221 @@
 \chapter{Uczenie maszynowe}\label{ch:uczenie-maszynowe}
 
 \section{Podstawy uczenia maszynowego}\label{sec:podstawy-uczenia-maszynowego}
-%Podstawy.
-%SVM, RFC i scikit-learn.
 
+Klasyczne programy komputerowe składają się z~szeregu instrukcji, w~których zawarte są wszystkie możliwe akcje podejmowane przez użytkownika.
+Istnieją jednak problemy o~tak dużej złożoności, że niemożliwe staje się opisanie wszystkich sytuacji.
+Przykładem może być autonomiczne sterowanie pojazdami.
+Przewidzenie wszystkich możliwych zjawisk na drodze jest bardzo trudne, jeśli nie niemożliwe.
+Klasyczny program musiałby być bardzo rozbudowany i~złożony, a~co za tym idzie również niełatwy do zrozumienia, implementacji i~rozwoju.
+Chcemy zatem, aby taki pojazd potrafił sam podejmować decyzje nawet dla nieznanych sytuacji i~uczył się na ich przykładzie.
 
-W klasyfikacji jako funkcja straty często stosowana jest entropia krzyżowa~\textit{(ang. cross-entropy loss)}.
-Jej ogólny wzór wygląda następująco~\cite{Russell2020}:
-\[H(P,Q) = \int P(x) \log Q(x)dx\]
-gdzie \textit{P} oznacza prawdziwe wartości zbioru testowego \textit{\(P^*(x, y)\)}, a \textit{Q} wartości przewidziane przez model \textit{\(P_w(y | x)\)}.
-Celem uczenia jest zmiana \textit{w} tak, aby zminimalizować \(H(P^*(x, y),P_w(y | x))\).
+O uczeniu maszynowym mówimy, gdy system komputerowy jest w~stanie stworzyć model, który na podstawie obserwacji danych pozwala mu na tworzenie hipotez i~podejmowanie decyzji~\cite{Russell2020}.
+Model to w~rzeczywistości funkcja \(h\), przybliżająca rzeczywistą funkcję \(f\), która opisuje dane wejściowe.
+Dane te to wektory zawierające pewne cechy, na przykład: piksele w~zdjęciu, częstotliwości dźwięku, ilość dni z~opadami deszczu itp.
+W zależności od typu wartości, jakie są przewidywane, mówi się zazwyczaj o~dwóch rodzajach problemów~\cite{Russell2020}:
+
+\begin{itemize}
+    \item klasyfikacji (ang.~\textit{classification}), gdy dane wyjściowe zawierają się w~skończonym zbiorze wartości,
+    \item regresji (ang.~\textit{regression}), gdy dane wyjściowe są wartością liczbową.
+\end{itemize}
+
+\subsection{Rodzaje uczenia maszynowego}\label{subsec:rodzaje-uczenia-maszynowego}
+
+Model uczy się dzięki zmienianiu tak zwanych parametrów.
+Są to wartości, które kontrolują działanie systemu, a~ich ilość różni się w~zależności od zastosowanego algorytmu~\cite{Goodfellow2016}.
+Ponadto model uczy się na podstawie pewnej informacji zwrotnej.
+Rozróżnia się trzy główne podejścia~\cite{Russell2020}:
+
+\begin{itemize}
+    \item W~uczeniu nadzorowanym (ang.~\textit{supervised learning}) system uczy się na podstawie par składających się z~wektora danych wejściowych i~wartości, którą chcemy przewidzieć (ang.~\textit{label}).
+    Celem uczenia jest przewidzenie wartości na podstawie danych wejściowych.
+
+    \item W~uczeniu nienadzorowanym (ang.~\textit{unsupervised learning}) system otrzymuje surowe dane wejściowe, w~których ma wykryć pewne zależności lub wzorce.
+    Program nie otrzymuje informacji zwrotnej, ponieważ nie istnieje pewien ściśle określony rezultat, który chcemy otrzymać.
+
+    \item W~uczeniu przez wzmacnianie~ (ang.~\textit{reinforcement learning}) uczenie odbywa się na podstawie systemu nagród i~kar.
+    Gdy system komputerowy robi to, co chemy osiągnąć otrzymuje za to pewną nagrodę, w~przeciwnym wypadku jest karany.
+    Celem systemu jest zatem podejmowanie akcji, które prowadzą do jak największej ilości nagród.
+\end{itemize}
+
+Algorytmy uczenia maszynowego posiadają zazwyczaj również szereg tak zwanych hiperparametrów (ang.~\textit{hyperparameters}), które można traktować jako dodatkowe opcje.
+Nie są one zmieniane w~trakcie uczenia, a~wymagają ustawienia ich przed uczeniem.
+Mają one znaczący wpływ na osiągane wyniki, dlatego zazwyczaj przeprowadza się osobny proces mający wybrać jak najlepsze wartości~\cite{Goodfellow2016}.
+
+\subsection{Przeuczenie i niedouczenie}\label{subsec:przeuczenie-i-niedouczenie}
+
+Wystarczająco skomplikowany model jest w~stanie osiągnąć bardzo dobre wyniki dla danych, na których był trenowany.
+Jednak głównym celem uczenia maszynowego jest stworzenie systemu, który będzie radził sobie z~niezaistniałymi wcześniej wejściami.
+Jest to proces tak zwanej generalizacji (ang.~\textit{generalization})~\cite{Goodfellow2016}.
+
+To w~jakim stopniu model może generalizować, zależy od jego pojemności (ang.~\textit{capacity}).
+Jest to miara opisująca umiejętność dopasowania modelu do różnorodnych funkcji.
+Model o~zbyt małej pojemności nie jest w~stanie dopasować się do zbioru treningowego.
+Z drugiej strony zbyt duża pojemność doprowadza do nauki zależności, które źle wpływają na wyniki dla nowych danych~\cite{Goodfellow2016}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{model_capacity}
+    \caption{Wizualna reprezentacja wyników modelu niedouczonego (lewa strona), modelu posiadającego dobry stopień generalizacji (środek) oraz modelu przuczonego (prawa strona). \textit{Źródło:~\cite{Goodfellow2016}}}
+    \label{fig:model-capacity}
+\end{figure}
+
+W procesie uczenia maszynowego celem jest minimalizacja błędu na zbiorze treningowym (ang.~\textit{training error}).
+Takie podejście może jednak doprowadzić do stworzenia modelu, który będzie wykazywał nadmierne dopasowanie (ang.~\textit{overfitting}), zwane również przeuczeniem.
+Powoduje to, że system nie jest w~stanie poradzić sobie z~danymi spoza zbioru treningowego i~daje złe wyniki~\cite{Goodfellow2016}.
+
+Chcemy zatem stworzyć model, którego celem nie będzie tylko minimalizacja błędu treningowego.
+Aby tego dokonać, zazwyczaj wydziela się pewien fragment ze zbioru wartości wejściowych, który zostaje użyty do oceny modelu, jest to tak zwany zbiór testowy.
+Nowym celem procesu uczenia jest minimalizacja błędu treningowego, ale z~zachowaniem jak najmniejszej różnicy między błędem treningowym a~błędem testowym (ang.~\textit{test error}), który jest obliczany dla zbioru testowego~\cite{Goodfellow2016}.
+
+Sytuację przeciwną, w~której model nie jest wystarczająco skomplikowany i~niemożliwe jest uzyskanie niskiego błędu treningowego, nazywa się niedouczeniem (ang.~\textit{underfitting})~\cite{Goodfellow2016}.
+
+\section{Przykładowe algorytmy uczenia maszynowego}\label{sec:przykadowe-algorytmy-uczenia-maszynowego}
+
+\subsection{Drzewa decyzyjne i lasy losowe}\label{subsec:drzewa-decyzyjne-i-lasy-losowe}
+
+Jedną z~najprostszych reprezentacji procesu podejmowania decyzji są drzewa decyzyjne (ang.~\textit{decision tree}).
+Przedstawiają one drzewa, czyli spójny, nieskierowany, acykliczny graf, którego wierzchołki przedstawiają pewien test, a~liście są decyzjami.
+Decyzja jest zatem uzyskiwana dzięki wykonaniu szeregu testów na danych wejściowych, aż do momentu dojścia do liścia~\cite{Russell2020}.
+
+W procesie uczenia algorytm stosuje zazwyczaj zachłannie metodę dziel i~zwyciężaj.
+Jako pierwsze do testów używa się wartości, które mają największy wpływ na klasyfikację, czyli dają największy przyrost informacji~\cite{Russell2020}.
+Można to obliczyć przy pomocy entropi Shannona lub Ginni index.
+Najpowszechniej stosowane algorytmy tworzące drzewa decyzyjne to ID3, C4.5 oraz CART~\cite{Russell2020, Murphy2022}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{decision_tree}
+    \caption{Przykładowe binarne (posiada tylko dwie możliwe decyzje) drzewo decyzyjne. Wierzchołki, oznaczone kolorem fioletowym, reprezentują testy. Przy krawędziach zaznaczono wynik testu, który powoduje jej wybranie. Liście, czyli decyzje, są oznacone kolorem niebieskim - Tak (Yes) oraz czerwonym - Nie (No). \textit{Źródło:~\cite{Russell2020}}}
+    \label{fig:decision-tree}
+\end{figure}
+
+Drzewa decyzyjne są jednak bardzo skłonne do nadmiernego dopasowania.
+W procesie uczenia drzewo może stworzyć tyle wierzchołków, że będzie w~stanie przypisać każdą wartość w~zbiorze treningowym do osobnego liścia.
+Taki model nie będzie w~stanie generalizować, co doprowadzi do złych wyników dla nowych danych.
+Rozwiązaniem tego problemu jest proces zwany przycinaniem drzewa (ang.~\textit{pruning}).
+Działa on na zasadzie usuwania wierzchołków, których dziećmi są tylko liście, i~które nie są statystycznie znaczące~\cite{Russell2020}.
+
+Dużą zaletą drzew decyzyjnych jest prostota ich interpretacji, bardzo łatwo jest je przedstawić wizualnie.
+Można je stosować zarówno do regresji, jak i~do klasyfikacji, potrafią nawet przypisywać kilka klas dla jednego wektora wejściowego.
+Dodatkowo są one w~stanie dopasować się do dużych zbiorów, nie potrzebują normalizacji oraz są stosunkowo szybkie.
+Główną wadą drzew decyzyjnych jest jednak ich niestabilność.
+Małe różnice w~danych wejściowych mogą prowadzić do dużych zmian w~finalnej strukturze drzewa oraz wynikach, które dają~\cite{Murphy2022}.
+
+Jednym ze sposobów zmniejszenia wariancji jest stworzenie wielu modeli i~podejmowanie decyzji na podstawie ich odpowiedzi, jest to tak zwane ensemble learning.
+Wyniki są zazwyczaj uśredniane lub przeprowadza się głosowanie, w~którym ostateczną odpowiedzią jest ta, którą zwraca największa liczba drzew~\cite{Russell2020}.
+W przypadku drzew decyzyjnych takie podejścia nazywa się lasami losowymi (ang.~\textit{random forest}).
+Każde z~drzew w~procesie wyboru nie bierze pod uwagę wszystkie \(n\) atrybutów a~jedynie pewną ich część, zazwyczaj \(\sqrt{n}\).
+Nadal wybierany jest ten atrybut, który daje jak największy przyrost informacji~\cite{Russell2020}.
+
+Popularne są również extremely randomized trees (ExtraTrees), które dodają kolejny element losowości.
+Zamiast szukać wartości progowej, która daje największy przyrost informacji, jest ona wybierana z~rozkładu jednostajnego danego atrybutu~\cite{Russell2020}.
+
+\subsection{Maszyna wektorów nośnych}\label{subsec:maszyna-wektorow-nosnych}
+
+Maszyny wektorów nośnych, w~skrócie SVM (ang.~\textit{Support Vector Machine}), to rodzina algorytmów uczenia maszynowego służąca do klasyfikacji oraz regresji.
+W procesie uczenia algorytm tworzy granice (ang.~\textit{decision boundary}), będące hiperpłaszczyznami, w~taki sposób, aby ich odległość od punktów była jak największa.
+Następnie na ich podstawie zwracany jest wynik~\cite{Russell2020}.
+
+Podstawowa wersja SVM opiera się na regresji liniowej.
+Można ją opisać wzorem:
+\[y = w^\top x + b,\]
+gdzie \(\top\) oznacza transpozycję, \(b\) to bias, który zawsze wynosi 1, \(x\) jest wektorem danych wejściowych, a~\(w^\top\) jest wektorem wag, które są zmieniane w~trakcie nauki~\cite{Goodfellow2016}.
+
+Maszyny wektorów nośnych pozwalają również na tworzenie modeli nieliniowych dzięki tak zwanemu kernel trick.
+Wynika on z~możliwości algorytmów uczenia maszynowego, które mogą być napisanie wyłącznie jako iloczyny skalarne między przykładami.
+Dzięki temu powyższa liniowa funkcja może być zapisana jako:
+\[w^\top x + b = b + \sum_{i=1}^{m} \alpha_{i} x^\top x^{(i)},\]
+gdzie \(\alpha\) jest wektorem wag, a~\(x^{(i)}\) przykładem treningowym.
+Następnie \(x\) może być zamienione na wynik funkcji \(\phi(x)\), a~iloczyn skalarny na funkcję \(k(x, x^{(i)}) = \phi(x)^\top \phi(x^{(i)})\), nazywaną kernelem.
+Daje to ostateczną funkcję~\cite{Goodfellow2016}:
+\[f(x) = b + \sum_{i} \alpha_{i} k(x, x^{(i)}).\]
+
+Istnieje wiele kerneli, jednym z~najpopularniejszych jest radial basis function (RBF).
+Ma on następujący wzór:
+\[k(u, v) = \mathcal{N}(u - v; 0,\sigma^2 I)\]
+gdzie \(\mathcal{N}(x; \mu, \Sigma)\) oznacza funkcję gęstości prawdopodobieństwa rozkładu normalnego.
+Wartość funkcji maleje w~przestrzeni \(v\) wraz z~oddalaniem się od punktu \(u\)~\cite{Goodfellow2016}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.85]{svm_kernels}
+    \caption{Wizualna reprezentacja granic wygenerowanych przez SVM wykorzystujące różne kernele. \textit{Żródło: https://scikit-learn.org/stable/modules/svm.html (dostęp 26.05.2023)}.}
+    \label{fig:svm-kernels}
+\end{figure}
+
+Jedną z~głównych zalet SVM jest to, że wagi \(\alpha\) wynoszą 0 z~wyjątkiem wektorów wzmacniających (ang.~\textit{support vectors}), które są punktami najbliższymi obliczonym hiperpłaszczyznom.
+Pozwala to na przyśpieszenie obliczeń i~ograniczenie zużycia pamięci.
+Mimo to maszyny wektorów nośnych znacząco tracą na wydajności w~przypadku dużych zbiorów danych~\cite{Russell2020, Goodfellow2016}.
 
 \section{Sztuczne sieci neuronowe}\label{sec:sztuczne-sieci-neuronowe}
-%Sieci.
-%TensorFlow.
+
+Budowa ludzkiego mózgu oraz sposób działania komórek nerwowych stały się źródłem inspiracji do stworzenia systemów, które potrafiłyby się uczyć.
+Doprowadziło to do stworzenia modeli zwanych dzisiaj sieciami neuronowymi~\cite{Russell2020}.
+
+\subsection{Głębokie sieci neuronowe}\label{subsec:gebokie-sieci-neuronowe}
+
+Współcześnie najpopularniejszym rodzajem sieci neuronowych są tak zwane sieci głębokie, których nazwa pochodzi od wykorzystywania wielu warstw w modelu.
+Składają się one z~neuronów, które imitują działanie biologicznych komórek nerwowych.
+Każdy neuron otrzymuje sygnały od wielu innych neuronów oraz sam generuje sygnał po przekroczeniu pewnej wartości.
+Neurony są grupowane w~warstwy, które można traktować jako osobne funkcje.
+Liczbę neuronów w~warstwie nazywa się szerokością modelu, a~ilość warstw w modelu głębokością.
+Sieć jest zatem złożeniem funkcji: \(f(x) = f^{(3)}(f^{(2)}(f^{(1)}(x)))\), gdzie \(f^{(1)}\) oznacza pierwszą warstwę, \(f^{(2)}\) drugą itd.
+Pierwsza warstwa \(f^{(1)}\) jest nazywana warstwą wejściową, ostatnia warstwa \(f^{(n - 1)}\) to warstwa wyjściowa, pozostałe nazywane są warstwami ukrytymi~\cite{Goodfellow2016}.
+
+Sieci zazwyczaj są jednokierunkowe (ang.~\textit{feedforward neural networks}).
+Przepływ sygnałów odbywa się tylko od warstwy wejściowej, poprzez warstwy ukryte, aż do warstwy wyjściowej.
+Sieci, w~których sygnały (końcowy wynik lub wyniki z~warstw ukrytych) przesyłane są w~obie strony nazywa się sieciami rekurencyjnymi~\cite{Goodfellow2016}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{feedforward_network}
+    \caption{Przykładowa jednokierunkowa sieć składająca się z~siedmiu warstw. Kwadraty po lewej stronie oznaczają neurony warstwy wejściowej, wyjściem jest pojedyńczy neuron po prawej stronie.~\textit{Źródło:~\cite{Russell2020}}.}
+    \label{fig:feedforward-network}
+\end{figure}
+
+\subsection{Funkcje aktywacji}\label{subsec:funkcje-aktywacji}
+
+Wartość, jaką neuron przekazuje do kolejnej warstwy, można wyrazić następującym wzorem:
+\[a_{j} = g_{j}(\Sigma_{i}w_{i,j}a_{i}),\]
+gdzie \(a_{j}\) oznacza neuron \(j\), \(w_{i,j}\) wagę połączenia między neuronem \(i\) oraz \(j\), natomiast \(g_{j}\) to nieliniowa funkcja aktywacji.
+Nieliniowość pozwala na odwzorowanie dowolnej funkcji przez wystarczająco skomplikowaną sieć~\cite{Russell2020}.
+
+Do najpopularniejszych funkcji aktywacji należą~\cite{Russell2020}:
+
+\begin{itemize}
+    \item ReLU (rectified linear unit): \(ReLU(x) = \max(0, x)\),
+    \item sigmoid (logistic function): \(\sigma(x) = 1 / (1 + e^{-x})\),
+    \item tangens hiperboliczny: \(\tanh(x) = \frac{e^{2x} - 1} {e^{2x} + 1}\).
+\end{itemize}
+
+\subsection{Gradient descent}\label{subsec:gradient-descent}
+
+Za uczenie sieci neuronowych odpowiadają algorytmy oparte na metodzie gradientu prostego (ang.~\textit{gradient descent}).
+Metoda ta pozwala na znalezienie lokalnego minimum w~przestrzeni dzięki wykonywaniu małych kroków w jego kierunku.
+Na początku wybiera się losowo punkt należący do danej przestrzeni, następnie oblicza się gradienty i~przesuwa w~kierunku największego spadku, aż do momentu dojścia do punktu z~minimalną wartością funkcji straty (ang.~\textit{loss function} lub \textit{cost function}). Odległość o~jaką przesuwany jest punkt nazywa się learning rate~\cite{Russell2020}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{gradient_descent}
+    \caption{Wizualizacja przykładowego działania metody gradient descent. Po lewej stronie algortym znajduje minimum lokalne, po prawej stronie algorytm natrafia na bardzo małe spadki i~może zostać zatrzymany przed znalezieniem globalnego minimum.~\textit{Źródło:~\cite{Geron2019}}.}
+    \label{fig:gradient-descent}
+\end{figure}
+
+Pojedynczy krok algorytmu można zatem zapisać następująco:
+\[w \leftarrow w - \alpha \nabla_{w} L(w),\]
+gdzie \(w\) to parametry sieci, \(\alpha\) to learning rate, \(L\) to funkcja straty~\cite{Russell2020}.
+
+W klasyfikacji jako funkcja straty często stosowana jest entropia krzyżowa (ang.~\textit{cross-entropy loss}).
+Jej ogólny wzór wygląda następująco:
+\[H(P,Q) = \int P(x) \log Q(x)dx,\]
+gdzie \textit{P} oznacza prawdziwe wartości zbioru testowego \textit{\(P^*(x, y)\)}, a~\textit{Q} wartości przewidziane przez model \textit{\(P_w(y | x)\)}.
+Celem uczenia jest zmiana \textit{w} tak, aby zminimalizować \(H(P^*(x, y),P_w(y | x))\)~\cite{Russell2020}.
+
+Często stosowany jest szybszy wariant algorytmu gradientu prostego zwany stochastic gradient descent, w~skrócie SGD\@.
+W odróżnieniu od zwykłego algorytmu, w~każdej iteracji losowo wybierana jest niewielka liczba wartości, zamiast całego zbioru treningowego.
+Pozwala to na znaczne przyśpieszenie obliczeń~\cite{Russell2020}.
+
+Innym popularnym algorytmem jest Adam, którego nazwa pochodzi od wyrażenia adaptive moments.
+W trakcie działania Adam dynamicznie zmienia learning rate oraz momentum.
+Momentum sprawia, że punkt dodatkowo przesuwa się w~kierunku opartym na średniej ruchomej poprzednich przesunięć~\cite{Goodfellow2016}.
