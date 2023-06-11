@@ -108,7 +108,7 @@ def process_data():
                 continue
 
             # add features to predict
-            pred = {'COND:': procedure.iloc[c]['COND'],
+            pred = {'COND': procedure.iloc[c]['COND'],
                     'ANS_VALENCE': procedure.iloc[c]['ANS-VALENCE'],
                     'ANS_AROUSAL': procedure.iloc[c]['ANS-AROUSAL']}
             pred_frame = pd.DataFrame(data=pred, index=[0])
