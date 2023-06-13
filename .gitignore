@@ -267,3 +267,4 @@ thesis/pdf_out/*.out
 /envs/
 /code/dataset/test.ipynb
 
+/.idea/jupyter-settings.xml
