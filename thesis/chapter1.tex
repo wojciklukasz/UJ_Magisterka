@@ -34,7 +34,7 @@ Ma ona na celu zmniejszenie liczby cech wejściowych poprzez łączenie tych sil
 Powszechnie stosowane podejścia to: analiza głównych składowych (ang.~\textit{principal components analysis (PCA)}), grupowanie hierarchiczne (ang.~\textit{hierarchical cluster analysis (HCA)}), Gaussian random projection~\cite{Geron2019}.
 
 Po uzyskaniu ostatecznych danych następuje trening modelu, zazwyczaj jest to uczenie nadzorowane~\cite{Russell2020}.
-Oznaczanie danych dobywa się na dwa sposoby.
+Oznaczanie danych odbywa się na dwa sposoby.
 W pierwszym każdy wektor danych ma przypisaną kategoryczną emocję, na przykład strach lub złość.
 W drugim emocje opisane są w~przestrzeni wielowymiarowej, zatem zamiast jednej kategorii posiadają zazwyczaj dwie lub trzy wartości.
 Do klasyfikacji stosuje się różnorakie podejścia, między innymi: support vector machine (SVM), random forest classifier (RFC), stochastic gradient descent (SGD), AdaBoost, k-nearest neighbor (k-NN), hidden Markov models (HMM), linear discriminate analysis (LDA), sztuczne sieci neuronowe~\cite{Varghese2015, Dzedzickis2020, Ko2018}.
@@ -65,18 +65,19 @@ W dostarczonym źródle może być ich wiele.
 Następnie przeprowadza się proces ekstrakcji charakterystycznych miejsc.
 Po uzyskaniu danych o~twarzy zostają one przetworzone przez algorytm uczenia nadzorowanego~\cite{Calvo2015}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.55]{action_units}
-    \caption{Przykłady różnych Action Units w~trzech częsciach twarzy. \textit{Źródło:~\cite{Ko2018}}}
-    \label{fig:action-units}
-\end{figure}
-
 Jedno z~popularnych podejść rozpoznaje emocje na podstawie Facial Action Coding System (FACS)~\cite{Ekman1978}.
 Zbiór ten zawiera, w~zależności od wersji, od 33 do 44 tak zwanych Action Units (AU).
 Powstały one przy pomocy stymulacji elektrycznej mięśni twarzy, które biorą udział w~wyrażaniu emocji.
 Dzięki temu uzyskano obiektywne ruchy mięśni o~różnej intensywności zależnej od napięcia prądu.
 Sam zbiór nie zawiera ścisłego określenia połączeń AU i~odpowiadającym im emocjom, a~jedynie hipotezy~\cite{Calvo2015}.
+Rysunek~\ref{fig:action-units} przedstawia przykładowe Action Units.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.55]{action_units}
+    \caption{Action Units w~trzech częsciach twarzy. \textit{Źródło:~\cite{Ko2018}}}
+    \label{fig:action-units}
+\end{figure}
 
 Inne podejścia bazują na zbiorach, w~których osoby były proszone o~wyrażenie danej emocji.
 Pozyskane w~ten sposób dane mają jednak wadę w~postaci zbyt intensywnego wyrazu twarzy, w~dodatku opartych na stereotypach.
@@ -90,8 +91,8 @@ Dodatkowo zbieranie danych nie wymaga kontaktu fizycznego i~nie powoduje dyskomf
 Same wyrazy twarzy dla wielu emocji są uniwersalne między członkami różnych kultur, płci i~niezależne od wieku~\cite{Calvo2015}.
 
 Mimo to z~tym podejściem wiąże się wiele problemów.
-Począwszy od trudności wynikających z~samego rozpoznawania twarzy, na przykład różne oświetlenie, czy kąt, pod jakim znajduje się twarz.
-Następnie pojawiają się problemy związane z~emocjami: osoba jest w~stanie celowo nie wyrażać żadnych emocji lub mogą być one bardzo nikłe~\cite{Calvo2015}.
+Począwszy od trudności wynikających z~samego rozpoznawania twarzy, na przykład różne oświetlenie, czy kąt, pod jakim się ona znajduje.
+Następnie pojawiają się problemy związane z~stanami emocjonalnymi: istnieje możliwość, że osoba nie wyraża żadnych emocji lub mogą być one bardzo nikłe~\cite{Calvo2015}.
 
 
 \subsection{Postawa ciała i gestykulacja}\label{subsec:postawa-ciaa-i-gestykulacja}
@@ -148,11 +149,12 @@ Po oczyszczeniu i~normalizacji następuje proces ekstrakcji cech niskiego poziom
 Są to wartości oparte o~częstotliwość głosu oraz o~zmiany w~sposobie wypowiedzi (na przykład szybkość mówienia lub poziom głośności).
 Sama ilość cech niskiego poziomu nie jest z~góry określona i~może być różna w~zależności od podejścia.
 Do najpopularniejszych LLD należą: fundamental frequency (F0), Mel-frequency cepstral coefficients (MFCCs), jitter, shimmer, harmonic-to-noise ratio oraz wartości z~widma akustycznego~\cite{Calvo2015, Abdelwahab2014}.
+Rysunek~\ref{fig:speech-signal} przedstawia przykładowe cechy niskiego poziomu.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.75]{speech-signal}
-    \caption{Przykładowy sygnał mowy z~zaznaczonymi jitter i~shimmer. \textit{Źródło:~\cite{Teixeira2013}}}
+    \caption{Sygnał mowy z~zaznaczonymi jitter i~shimmer. \textit{Źródło:~\cite{Teixeira2013}}}
     \label{fig:speech-signal}
 \end{figure}
 
@@ -185,7 +187,7 @@ Po nim pojawia się załamek T odpowiadający repolaryzacji komór~\cite{Dzedzic
 
 W automatycznym rozpoznawaniu emocji najczęściej bierze się pod uwagę zespół QRS oraz odległości między załamkami R (ang.~\textit{R-R interval / inter-beat interval}), które wykorzystuje się w~analizie zmienności rytmu zatokowego (ang.~\textit{heart rate variability (HRV)})~\cite{Calvo2015}.
 
-Drugim często używanym sygnałem biofizycznym jest reakcja skórno-galwaniczna, powszechnie używa się dwóch skrótów: GSR (ang.~\textit{galvanic skin response}) lub EDA (ang.~\textit{electrodermal activity}).
+Drugim często używanym sygnałem biofizycznym jest reakcja skórno-galwaniczna, powszechnie stosuje się dwa skróty: GSR (ang.~\textit{galvanic skin response}) lub EDA (ang.~\textit{electrodermal activity}).
 Opisuje ona zmiany w~przewodnictwie skóry spowodowane aktywnością gruczołów potowych.
 Prowadzi to do różnic w~wilgotności i~w~następstwie do zmiany oporu elektrycznego~\cite{Dzedzickis2020}.
 Pomiary wykonuje się za pomocą elektrod, które mogą być umieszczone w~dowolnym miejscu na skórze.
@@ -231,6 +233,11 @@ Najprostszym sposobem jest przydzielenie im pewnej kategorii, na przykład: stra
 W automatycznym rozpoznawaniu emocji ich liczba jest zazwyczaj niewielka i~wynosi od 4 do 8~\cite{Dzedzickis2020}.
 Czasem są to również klasyfikatory binarne, które przewidują jedynie czy dane należą do danej klasy, czy nie.
 
+Najczęściej wykorzystuje się kategorie należące do tak zwanych podstawowych emocji.
+Zostały one zaproponowane między innymi przez Paula Ekmana w~1971 roku~\cite{Ekman1971}.
+Należą do nich: radość, smutek, złość, zdziwienie, strach oraz wstręt.
+Rysunek~\ref{fig:database-example} przedstawia możliwe sposoby wyrażania tych emocji.
+
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.35]{database_example}
@@ -238,16 +245,13 @@ Czasem są to również klasyfikatory binarne, które przewidują jedynie czy da
     \label{fig:database-example}
 \end{figure}
 
-Najczęściej wykorzystuje się kategorie należące do tak zwanych podstawowych emocji.
-Zostały one zaproponowane między innymi przez Paula Ekmana w~1971 roku~\cite{Ekman1971}.
-Należą do nich: radość, smutek, złość, zdziwienie, strach oraz wstręt.
-
 Inne popularne podejścia reprezentują emocje za pomocą dwóch lub trzech ciągłych wartości liczbowych.
 Stany emocjonalne są przedstawione w~przestrzeni, dzięki czemu można reprezentować o~wiele więcej kategorii, w~sposób bardziej płynny i~dokładny~\cite{Calvo2015}.
 
 Wiele podejść opiera się na dwuwymiarowym modelu zaproponowanym przez Jamesa Russella~\cite{Russell1980}.
 Emocje w~tym modelu reprezentowane są za pomocą wartości opisujących przyjemność odczuwanej emocji (ang.~\textit{valence}) oraz pobudzenie jakie wywołuje (ang.~\textit{arousal}).
 Sam model jest zazwyczaj w~kształcie koła, które może być podzielone na wycinki przedstawiające emocje.
+Rysunek~\ref{fig:circumplex-model} zawiera jedną z możliwych reprezentacji modelu Russella.
 Punkt leżący w~danym wycinku przedstawia odpowiednią emocję~\cite{Dzedzickis2020}.
 
 \begin{figure}[h]
@@ -282,3 +286,14 @@ Tego typu systemy o~wiele rzadziej napotykają problem braku danych oraz zapewni
 Systemy wielomodalne zmagają się jednak z~innymi problemami.
 Największy to łączenie ze sobą danych, które wymagają różnych okienek czasowych do analizy.
 Film może być analizowany na podstawie pojedynczych klatek, jednak sygnały biofizyczne lub mowa wymagają zazwyczaj dłuższych pomiarów, aby dać wartościowe dane~\cite{Calvo2015}.
+
+\section{Podsumowanie}\label{sec:podsumowanie}
+
+W~tym rozdziale przedstawiono podstawy systemów rozpoznających emocje, ich ogólną strukturę oraz możliwe algorytmy służące do predykcji.
+Następnie zaprezentowane źródła, na podstawie których można wnioskować stany emocjonalne.
+Opisano również najczęściej uzyskiwane cechy z~danych źródeł.
+Skupiono się na najpopularniejszych podejściach, od analizy tego, co jest odbieralne ludzkimi zmysłami: wyraz twarzy, mowa, aż po sygnały biofizyczne, wytwarzane przez organizm człowieka, niezależnie od jego woli.
+Dodatkowo opisano sposoby reprezentacji emocji w systemach komputerowych, modele wielowymiarowe oraz podejścia oparte o~kategorie.
+Na koniec opisano pojęcie modalności.
+
+Następny rozdział skupia się na uczeniu maszynowym, które jest najczęściej wykorzystywanym podejściem w systemach automatycznej predykcji emocji.

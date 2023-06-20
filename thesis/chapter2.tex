@@ -69,6 +69,7 @@ Aby tego dokonać, zazwyczaj wydziela się pewien fragment ze zbioru wartości w
 Nowym celem procesu uczenia jest minimalizacja błędu treningowego, ale z~zachowaniem jak najmniejszej różnicy między błędem treningowym a~błędem testowym (ang.~\textit{test error}), który jest obliczany dla zbioru testowego~\cite{Goodfellow2016}.
 
 Sytuację przeciwną, w~której model nie jest wystarczająco skomplikowany i~niemożliwe jest uzyskanie niskiego błędu treningowego, nazywa się niedouczeniem (ang.~\textit{underfitting})~\cite{Goodfellow2016}.
+Rysunek~\ref{fig:model-capacity} przedstawia funkcje wygenerowane przez model niedouczony, przeuczony oraz przez odpowiednio dopasowany.
 
 \section{Przykładowe algorytmy uczenia maszynowego}\label{sec:przykadowe-algorytmy-uczenia-maszynowego}
 
@@ -77,6 +78,7 @@ Sytuację przeciwną, w~której model nie jest wystarczająco skomplikowany i~ni
 Jedną z~najprostszych reprezentacji procesu podejmowania decyzji są drzewa decyzyjne (ang.~\textit{decision tree}).
 Przedstawiają one drzewa, czyli spójny, nieskierowany, acykliczny graf, którego wierzchołki przedstawiają pewien test, a~liście są decyzjami.
 Decyzja jest zatem uzyskiwana dzięki wykonaniu szeregu testów na danych wejściowych, aż do momentu dojścia do liścia~\cite{Russell2020}.
+Rysunek~\ref{fig:decision-tree} przedstawia wizualną reprezentację drzewa decyzyjnego.
 
 W procesie uczenia algorytm stosuje zazwyczaj zachłannie metodę dziel i~zwyciężaj.
 Jako pierwsze do testów używa się wartości, które mają największy wpływ na klasyfikację, czyli dają największy przyrost informacji~\cite{Russell2020}.
@@ -86,7 +88,7 @@ Najpowszechniej stosowane algorytmy tworzące drzewa decyzyjne to ID3, C4.5 oraz
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.75]{decision_tree}
-    \caption{Przykładowe binarne (posiada tylko dwie możliwe decyzje) drzewo decyzyjne. Wierzchołki, oznaczone kolorem fioletowym, reprezentują testy. Przy krawędziach zaznaczono wynik testu, który powoduje jej wybranie. Liście, czyli decyzje, są oznacone kolorem niebieskim - Tak (Yes) oraz czerwonym - Nie (No). \textit{Źródło:~\cite{Russell2020}}}
+    \caption{Przykładowe binarne (posiada tylko dwie możliwe decyzje) drzewo decyzyjne. Wierzchołki, oznaczone kolorem fioletowym, reprezentują testy. Przy krawędziach zaznaczono wynik testu, który powoduje jej wybranie. Liście, czyli decyzje, są oznaczone kolorem niebieskim -- Tak (Yes) oraz czerwonym -- Nie (No). \textit{Źródło:~\cite{Russell2020}}}
     \label{fig:decision-tree}
 \end{figure}
 
@@ -136,6 +138,7 @@ Ma on następujący wzór:
 \[k(u, v) = \mathcal{N}(u - v; 0,\sigma^2 I)\]
 gdzie \(\mathcal{N}(x; \mu, \Sigma)\) oznacza funkcję gęstości prawdopodobieństwa rozkładu normalnego.
 Wartość funkcji maleje w~przestrzeni \(v\) wraz z~oddalaniem się od punktu \(u\)~\cite{Goodfellow2016}.
+Rysunek~\ref{fig:svm-kernels} przedstawia hiperpłaszczyzny uzyskane przez różne kernele.
 
 \begin{figure}[h]
     \centering
@@ -165,6 +168,7 @@ Pierwsza warstwa \(f^{(1)}\) jest nazywana warstwą wejściową, ostatnia warstw
 
 Sieci zazwyczaj są jednokierunkowe (ang.~\textit{feedforward neural networks}).
 Przepływ sygnałów odbywa się tylko od warstwy wejściowej, poprzez warstwy ukryte, aż do warstwy wyjściowej.
+Rysunek~\ref{fig:feedforward-network} zawiera wizualną reprezentację takiej sieci.
 Sieci, w~których sygnały (końcowy wynik lub wyniki z~warstw ukrytych) przesyłane są w~obie strony nazywa się sieciami rekurencyjnymi~\cite{Goodfellow2016}.
 
 \begin{figure}[h]
@@ -194,6 +198,7 @@ Do najpopularniejszych funkcji aktywacji należą~\cite{Russell2020}:
 Za uczenie sieci neuronowych odpowiadają algorytmy oparte na metodzie gradientu prostego (ang.~\textit{gradient descent}).
 Metoda ta pozwala na znalezienie lokalnego minimum w~przestrzeni dzięki wykonywaniu małych kroków w jego kierunku.
 Na początku wybiera się losowo punkt należący do danej przestrzeni, następnie oblicza się gradienty i~przesuwa w~kierunku największego spadku, aż do momentu dojścia do punktu z~minimalną wartością funkcji straty (ang.~\textit{loss function} lub \textit{cost function}). Odległość o~jaką przesuwany jest punkt nazywa się learning rate~\cite{Russell2020}.
+Rysunek~\ref{fig:gradient-descent} przedstawia działanie algorytmu.
 
 \begin{figure}[h]
     \centering
@@ -219,3 +224,12 @@ Pozwala to na znaczne przyśpieszenie obliczeń~\cite{Russell2020}.
 Innym popularnym algorytmem jest Adam, którego nazwa pochodzi od wyrażenia adaptive moments.
 W trakcie działania Adam dynamicznie zmienia learning rate oraz momentum.
 Momentum sprawia, że punkt dodatkowo przesuwa się w~kierunku opartym na średniej ruchomej poprzednich przesunięć~\cite{Goodfellow2016}.
+
+\section{Podsumowanie}\label{sec:podsumowanie2}
+
+W~tym rozdziale wprowadzono i~opisano podstawowe pojęcia związane z~uczeniem maszynowym.
+Następnie przedstawiono problemy związane z pojemnością modeli: niedouczenie i~przeuczenie.
+Przedstawiono również dokładniej sposób działania dwóch popularnych algorytmów: maszyn wektorów nośnych oraz drzew decyzyjnych.
+Dalej skupiono się na sieciach neuronowych, ich strukturze, funkcjach aktywacji i~sposobie uczenia, czyli metodzie gradient descent.
+
+W kolejnym rozdziale stworzony zostanie system wykorzystujący powyższe algorytmy: maszyny wektorów nośnych, drzewa decyzyjne oraz sieci neuronowe, którego celem będzie predykcja emocji na podstawie sygnałów EKG, EDA i~ich połączenia.

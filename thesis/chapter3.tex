@@ -6,15 +6,16 @@ W pracy wykorzystano gotowy zbiór danych o nazwie BIRAFFE2~\cite{Kutt2022}.
 Zawiera on zapisy elektrokardiografii (EKG), reakcji skórno-galwanicznej (EDA), wyrazów twarzy i~ruchu dłoni, które zostały nagrane podczas prób wywołania emocji przez stymulanty audiowizualne i~specjalnie przygotowane gry komputerowe.
 Dodatkowo w~zbiorze zawarto subiektywną ocenę stymulantów w~dwuwymiarowej przestrzeni przyjemności i~pobudzenia (ang.~\textit{valence, arousal}), wyniki testu osobowości opartego o tak zwaną wielką piątkę (ang.~\textit{big five}) oraz ankiety o doświadczeniu z~grami komputerowymi.
 Dane pochodzą od 102 osób w~wieku od 18 do 26 lat, z~czego 33\% badanych to kobiety~\cite{Kutt2022}.
+Rysunek~\ref{fig:BIRAFFE2-widget} przedstawia widżet, który wykorzystano do uzyskania wartości przyjemności i~pobudzenia.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.35]{BIRAFFE2_widget}
+    \includegraphics[scale=0.32]{BIRAFFE2_widget}
     \caption{Widżet użyty do subiektywnej oceny stymulantów. \textit{Źródło:~\cite{Kutt2022}}}
     \label{fig:BIRAFFE2-widget}
 \end{figure}
 
-Stymulanty audiowizualne prezentowane były w~dwóch turach, z~sesją gry komputerowej pomiędzy turami.
+Stymulanty audiowizualne prezentowane były w~dwóch turach, z~sesją gry komputerowej pomiędzy nimi.
 Każdy stymulant prezentowany był przez 6 sekund, po czym badany miał 6 sekund na ocenę wywołanych emocji i~następowało kolejne 6 sekund przerwy~\cite{Kutt2022}.
 Wizualne stymulanty wybrano ze zbioru IAPS~\cite{IAPS}, a~dźwiękowe ze zbioru IADS~\cite{IADS}.
 
@@ -25,7 +26,7 @@ W niniejszej pracy wykorzystano jedynie zapisy EKG oraz EDA z~obu tur prezentacj
 \subsection{Oczyszczanie i ekstrakcja cech}\label{subsec:oczyszczanie-i-ekstrakcja-cech}
 
 Cały system automatycznej predykcji emocji, opisany w~tej pracy, został napisany w~języku Python.
-Aby oczyścić dane i~dokonać ekstrakcji cech (ang.~\textit{feature extraction}) użyto biblioteki NeuroKit\footnote{https://neuropsychology.github.io/NeuroKit/}~\cite{Neurokit}.
+Aby oczyścić dane i~dokonać ekstrakcji cech (ang.~\textit{feature extraction}) użyto biblioteki NeuroKit\footnote{\url{https://neuropsychology.github.io/NeuroKit/}}~\cite{Neurokit}.
 Zawiera ona wiele funkcji i~narzędzi pozwalających na pracę z~sygnałami biofizycznymi.
 
 Dane zostały podzielone na okienka o długości 18 sekund, co odpowiada pojawieniu się pojedynczego stymulanta audiowizualnego, czasu na subiektywną ocenę emocji oraz przerwie przed kolejnym stymulantem.
@@ -38,7 +39,7 @@ Na ich podstawie obliczano średnią częstotliwość występowania załamków f
 Podobnie jak EKG, sygnał EDA był na początku oczyszczany i~wydzielono z~niego tonic component, użyto do tego funkcję \texttt{eda\_process()}.
 Następnie obliczono ilość wystąpień reakcji oraz ich średnią amplitudę wykorzystując funkcję \texttt{eda\_intervalrelated()}.
 Kolejnym krokiem było obliczenie standardowego odchylenia dla tonic component.
-Następnie wykorzystano \texttt{eda\_sympathetic()} aby uzyskać wartości związane z~sympathetic component, czyli wartościami w~zakresie 0,0045 - 0,25 Hz~\cite{Posada2016}.
+Następnie wykorzystano \texttt{eda\_sympathetic()} aby uzyskać wartości związane z~sympathetic component, czyli sygnałem w~zakresie 0,0045 - 0,25 Hz~\cite{Posada2016}.
 Na koniec obliczono autokorelację sygnału stosując \texttt{eda\_autocorr()}.
 
 W kolejnym kroku zastosowano powyższe metody dla sygnałów z~przedziału od pierwszego do ostatniego stymulanta, które potraktowano jako średnią wartość, unikalną dla każdego badanego.
@@ -52,17 +53,19 @@ Były to przyjemność emocji (ang.~\textit{valence}) oraz pobudzenie (ang.~\tex
 
 Po uzyskaniu cech przeprowadzono proces grupowania (ang.~\textit{clustering}), w~celu zmiany problemu z~regresji do klasyfikacji dla kilku klas.
 Wykorzystano do tego algorytm K-Means, który jest przykładem uczenia nienadzorowanego i~został zaproponowany przez Lloyda~\cite{Lloyd1982}.
-Sama użyta funkcja \texttt{KMeans()} pochodzi z~biblioteki scikit-learn\footnote{https://scikit-learn.org/}~\cite{scikit-learn}.
+Sama użyta funkcja \texttt{KMeans()} pochodzi z~biblioteki scikit-learn\footnote{\url{https://scikit-learn.org/}}~\cite{scikit-learn}.
 
-Po obliczeniu centroidów oraz uzyskaniu grup ręcznie przypisano im emocje na podstawie modelu kołowego z~\cite{Kollias2019}.
-W pracy stworzono modele dla 8, 6 i~4 emocji.
+Po obliczeniu centroidów oraz uzyskaniu grup ręcznie przypisano im emocje na podstawie modelu kołowego z~\cite{Kollias2019}, przedstawionego na obrazku~\ref{fig:emotions-wheel}.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.5]{emotions_wheel}
+    \includegraphics[scale=0.55]{emotions_wheel}
     \caption{Model kołowy użyty do przypisania emocj do grup. \textit{Źródło:~\cite{Kollias2019}}}
     \label{fig:emotions-wheel}
 \end{figure}
+
+W pracy stworzono modele dla ośmiu, sześciu i~czterech emocji.
+Rysunek~\ref{fig:clusters-all} przedstawia pozyskane grupy.
 
 \begin{figure}[h!]
     \begin{subfigure}{0.5\textwidth}
@@ -88,21 +91,168 @@ W pracy stworzono modele dla 8, 6 i~4 emocji.
 \end{figure}
 
 \section{Wyniki}\label{sec:wyniki}
-Porównanie wyników różnych modeli scikit-learn i~TensorFlow oraz modalności, kilka tabelek.
 
-\begin{table}[h!]
+Do predykcji emocji wykorzystano trzy algorytmy: maszyny wektorów nośnych (SVM), lasy losowe (RFC) oraz sieć neuronową (NN).
+Dla dwóch pierwszych użyto implementacji dostępnych w~scikit-learn, odpowiednio \texttt{SVC()} i~\texttt{RandomForestClassifier()}.
+W przypadku sieci neuronowej wykorzystano natomiast bibliotekę TensorFlow\footnote{\url{https://tensorflow.org/}}~\cite{Tensorflow2015}.
+Stworzono stosunkowo prostą wielowarstwową jednokierunkową sieć neuronową, składającą się z~gęstych warstw (ang.~\textit{dense layer}), czyli wszystkie neurony w warstwie były połączone ze wszystkimi neuronami w kolejnej warstwie.
+Jako funkcję aktywacji wykorzystano ReLU, a~do nauki użyto SGD z~momentum.
+
+Dane wejściowe były skalowane wykorzystując \texttt{StandardScaler()} z~scikit-learn, tak aby każda cecha posiadała średnią równą 0 oraz odchylenie standardowe równe 1.
+Następnie dzielono dane na zbiór treningowy oraz zbiór testowy.
+Zbiór testowy zawierał 10\% losowo wybranych wartości.
+Sieć neuronowa wymagała dodatkowo zbioru walidacyjnego, który również zawierał 10\% losowo wybranych wartości.
+
+Do oceny wyników modeli wykorzystano trzy miary.
+Pierwsza z~nich, accuracy, mówi o~tym ile wartości zostało sklasyfikowanych poprawnie~\cite{Goodfellow2016}.
+Pozostałe są oparte o~tak zwany F-score lub \(F_{1}\), który opiera się na dwóch miarach.
+Precision, które opisuje, ile razy model zaklasyfikował przykład poprawnie, czyli ile razy nie popełnił błędu.
+Recall, mówiące o tym ile wartości sklasyfikowano jako poprawne, co można interpretować jako umiejętność znalezienia wszystkich poprawnych wartości.
+\(F_{1}\) można natomiast opisać wzorem: \(F = \frac{2pr}{p + r},\) gdzie \(p\)~to precision, a~\(r\)~to recall~\cite{Goodfellow2016}.
+
+Miary te można jednak obliczać jedynie dla klasyfikatorów binarnych.
+W~przypadku przewidywania wielu klas, oblicza się \(F_{1}\) osobno dla każdej.
+Następnie można stosować wiele podejść.
+W~Macro \(F_{1}\) uzyskuje się średnią z~wartości wszystkich klas.
+Weighted \(F_{1}\) bierze dodatkowo pod uwagę Support, czyli ilość wystąpień klasy w~zbiorze.
+Pozwala to na lepsze oszacowanie zbiorów, w~których ilość klas nie jest równa.
+
+\subsection{Elektrokardiografia}\label{subsec:ekg}
+
+Po wykonaniu powyższych kroków wybrano wartości związane z~elektrokardiografią oraz zmiennością rytmu zatokowego, co dało 29 cech.
+Następnie dane ze zbiorów treningowych zostały przetworzone przez algorytmy.
+Na koniec sprawdzono ich skuteczność na zbiorach treningowych.
+Tabela~\ref{tab:table-ekg} zawiera uzyskane wyniki.
+
+\begin{table}[h]
     \centering
-    \begin{tabular}{||c c c c||}
+    \begin{tabular}{||c||c||c|c|c||}
         \hline
-        Col1 & Col2 & Col2 & Col3 \\ [0.5ex]
+        Ilość emocji & Model & Accuracy & Macro \(F_{1}\) & Weighted \(F_{1}\) \\ [0.5ex]
         \hline\hline
-        1 & 6 & 87837 & 787 \\
-        2 & 7 & 78 & 5415 \\
-        3 & 545 & 778 & 7507 \\
-        4 & 545 & 18744 & 7560 \\
-        5 & 88 & 788 & 6344 \\ [1ex]
+        \multirow{3}{4em}{Cztery} & SVM & 0.3113 & 0.1249 & 0.1547 \\
+        \cline{2-5}
+        & RFC & 0.3340 & 0.2743 & 0.2988 \\
+        \cline{2-5}
+        & NN & 0.3283 & 0.1390 & 0.1763 \\
+        \hline\hline
+        \multirow{3}{4em}{Sześć} & SVM & 0.2346 & 0.0690 & 0.0938 \\
+        \cline{2-5}
+        & RFC & 0.2763 & 0.2113 & 0.2389 \\
+        \cline{2-5}
+        & NN & 0.2857 & 0.2003 & 0.2363 \\
+        \hline\hline
+        \multirow{3}{4em}{Osiem} & SVM & 0.1892 & 0.0442 & 0.0646 \\
+        \cline{2-5}
+        & RFC & 0.2223 & 0.1601 & 0.1928 \\
+        \cline{2-5}
+        & NN & 0.2403 & 0.1592 & 0.2007 \\
         \hline
     \end{tabular}
-    \caption{Table to test captions and labels.}
-    \label{tab:table1}
+    \caption{Wyniki systemu opartego na sygnale EKG.}
+    \label{tab:table-ekg}
 \end{table}
+
+Dla czterech i~sześciu emocji najlepszym modelem były lasy losowe, natomiast dla ośmiu emocji lepsze wyniki osiągnęła sieć neuronowa.
+Najgorszym modelem we wszystkich testach jest SVM, który jest również najmniej skomplikowany, przez co nie posiada on wystarczającej pojemności dla tak złożonych danych.
+
+\subsection{Reakcja skórno-galwaniczna}\label{subsec:reakcja-skorno-galwaniczna}
+
+Podobnie do EKG, po wyodrębnieniu cech związanych z reakcją skórno-galwaniczną uzyskano ich 11.
+Tabela~\ref{tab:table-eda} zawiera uzyskane wyniki.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{||c||c||c|c|c||}
+        \hline
+        Ilość emocji & Model & Accuracy & Macro \(F_{1}\) & Weighted \(F_{1}\) \\ [0.5ex]
+        \hline\hline
+        \multirow{3}{4em}{Cztery} & SVM & 0.3113 & 0.1187 & 0.1478 \\
+        \cline{2-5}
+        & RFC & 0.3141 & 0.2848 & 0.3016 \\
+        \cline{2-5}
+        & NN & 0.3132 & 0.2032 & 0.2450 \\
+        \hline\hline
+        \multirow{3}{4em}{Sześć} & SVM & 0.2337 & 0.0631 & 0.0885 \\
+        \cline{2-5}
+        & RFC & 0.2886 & 0.2384 & 0.2672 \\
+        \cline{2-5}
+        & NN & 0.2621 & 0.1418 & 0.1790 \\
+        \hline\hline
+        \multirow{3}{4em}{Osiem} & SVM & 0.1892 & 0.0432 & 0.0643 \\
+        \cline{2-5}
+        & RFC & 0.2233 & 0.1828 & 0.2105 \\
+        \cline{2-5}
+        & NN & 0.2241 & 0.1335 & 0.1935 \\
+        \hline
+    \end{tabular}
+    \caption{Wyniki systemu opartego o reakcję skórno-galwaniczną.}
+    \label{tab:table-eda}
+\end{table}
+
+Wyniki są bardzo zbliżone do tych uzyskanych przez systemy bazujące na elektrokardiografi.
+Lasy losowe oraz sieć neuronowa osiągnęły podobne wyniki, natomiast maszyna wektorów nośnych jest znacząco gorsza.
+Dla czerech emocji najlepszy model (RFC) uzyskał gorsze accuracy niż system EKG, ale \(F_{1}\) były lepsze dla systemu opartego o~EDA\@.
+W przypadku sześciu i~ośmiu emocji lepszy okazał się algorytm rozpoznający emocje na postawie reakcji skórno-galwanicznej.
+
+\subsection{System wielomodalny}\label{subsec:system-wielomodalny}
+
+Na koniec stworzono modele, oparte o cechy zarówno z~EKG, jak i~z~EDA, tworząc system wielomodalny.
+Uzyskano dzięki temu 40 cech.
+Tabela~\ref{tab:table-combined} przedstawia wyniki systemu wielomodalnego.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{||c||c||c|c|c||}
+        \hline
+        Ilość emocji & Model & Accuracy & Macro \(F_{1}\) & Weighted \(F_{1}\) \\ [0.5ex]
+        \hline\hline
+        \multirow{3}{4em}{Cztery} & SVM & 0.3122 & 0.1332 & 0.1641 \\
+        \cline{2-5}
+        & RFC & 0.3321 & 0.2848 & 0.3060 \\
+        \cline{2-5}
+        & NN & 0.3396 & 0.2202 & 0.2643 \\
+        \hline\hline
+        \multirow{3}{4em}{Sześć} & SVM & 0.2346 & 0.0690 & 0.0938 \\
+        \cline{2-5}
+        & RFC & 0.2933 & 0.2297 & 0.2606 \\
+        \cline{2-5}
+        & NN & 0.2990 & 0.2274 & 0.2591 \\
+        \hline\hline
+        \multirow{3}{4em}{Osiem} & SVM & 0.1911 & 0.0541 & 0.0783 \\
+        \cline{2-5}
+        & RFC & 0.2308 & 0.1810 & 0.2109 \\
+        \cline{2-5}
+        & NN & 0.2507 & 0.1935 & 0.2252 \\
+        \hline
+    \end{tabular}
+    \caption{Wyniki systemu wielomodalnego.}
+    \label{tab:table-combined}
+\end{table}
+
+Dla czterech i~ośmiu cech lepsze wyniki uzyskano dzięki zastosowaniu systemu wielomodalnego.
+Natomiast dla sześciu emocji niewiele lepszy okazał się system oparty o~EDA\@.
+Nie są to jednak bardzo duże różnice, wynoszą one około 1\%.
+Tak jak w~systemach jednomodalnych, SVM dawały najgorsze wyniki, a~lasy losowe oraz sieci neuronowe były do siebie zbliżone.
+Dla najbardziej skomplikowanego przypadku, czyli ośmiu emocji, sieć znowu uzyskała najlepsze wyniki.
+
+\section{Podsumowanie wyników}\label{sec:podsumowanie-wynikow}
+
+Niestety uzyskane wyniki są stosunkowo niskie.
+Mimo to nadal są lepsze od losowego wybierania emocji, które wynosiłoby 25\% dla czterech emocji, 16,7\% dla sześciu i~12,5\% dla ośmiu.
+Złożoność problemu najlepiej obrazują wyniki uzyskane przez prostsze maszyny wektorów nośnych, których \(F_{1}\) było 2–3 razy gorsze od bardziej skomplikowanych algorytmów.
+Sygnały biofizyczne dodatkowo komplikują automatyczną predykcję, między innymi przez to, że są one niezależne od woli człowieka, oraz przez różnice między poszczególnymi osobami.
+Nawet próby wywołania pewnych określonych emocji mogą skutkować odmiennymi reakcjami.
+W~przypadku wyrazu twarzy lub mowy istnieje możliwość sztucznego przedstawiania emocji, lub ich wyolbrzymiania.
+Nie da się uzyskać takiego efektu dla sygnałów biofizycznych.
+
+Istnieje kilka podejść, które mają potencjał polepszenia wyników.
+Zbiór danych zawiera zdjęcia wyrazów twarzy, które mogą zostać wykorzystane jako kolejne źródło informacji o~stanie emocjonalnym.
+Mimo że nie są to sztucznie wyrażane emocje, a~naturalne reakcje badanych, systemy oparte o wyrazy twarzy uzyskują bardzo dobre wyniki oraz są jednym z~najpopularniejszych podejść w automatycznej predykcji stanów emocjonalnych.
+
+Drugą możliwością jest dalsze eksperymentowanie z~sieciami neuronowymi.
+W~niniejszej pracy uzyskiwały one najlepsze wyniki dla rozpoznawania ośmiu emocji, co pokazuje ich potencjał w skomplikowanych problemach.
+Ilość hiperparametrów oraz potencjalne architektury sprawiają, że stworzenie najlepszej sieci neuronowej jest bardzo skomplikowane.
+Możliwe jest wykorzystanie sieci konwolucyjnych, rekurencyjnych lub residual.
+
+Kolejne podejścia mogą opierać się na wykorzystaniu odmiennego procesu przygotowania danych, na przykład przez ekstrakcję większej ilości cech lub użycie innych algorytmów zarówno do ekstrakcji, jak i~uczenia.
